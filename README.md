@@ -15,7 +15,7 @@
 
 - [x] Frontend
 - [ ] Gateway
-- [ ] Synchronous communication
+- [x] Synchronous communication
 - [ ] Asynchronous communication (RabbitMQ)
 - [ ] Healthcheck
   - [ ] Actuator
