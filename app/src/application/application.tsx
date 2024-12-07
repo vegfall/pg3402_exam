@@ -7,7 +7,7 @@ export default function Application() {
 
   useEffect(() => {
     axios
-      .get("http://127.0.0.1:8080/api/test")
+      .get("http://127.0.0.1:8080/quiz/test")
       .then((response) => {
         setQuizData(response.data);
       })
