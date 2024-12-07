@@ -16,8 +16,6 @@ export default function Application() {
       });
   }, []);
 
-  alert(quizData?.questionText);
-
   return (
     <div>
       <h1>Question:</h1>

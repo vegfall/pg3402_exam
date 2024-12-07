@@ -1,4 +1,5 @@
 ## ToDo
+
 - [x] Add a simple frontend (React Hello World)
 - [x] Add a simple backend (Spring boot API get string call)
 - [x] Create simple question dto and print in frontend
@@ -10,7 +11,8 @@
 - [ ] Setup API call message to openai to get desired data
 - [ ] ...
 
-## Important Implimentations
+## Important Implementations
+
 - [x] Frontend
 - [ ] Gateway
 - [ ] Synchronous communication
@@ -21,10 +23,12 @@
 - [ ] Database (MySQL?)
 - [ ] Docker
 - [ ] Testing?
+- [ ] Exception Handling
 
 ## Backend services to add
+
 - [x] QuizService
-- [ ] QuestionService
+- [x] QuestionService
 - [ ] ResultService
 - [ ] AIService
 - [ ] UserService

@@ -1,19 +1,19 @@
 package com.quiz.quiz.service;
 
+import com.quiz.quiz.client.QuestionClient;
 import com.quiz.quiz.dto.QuestionDTO;
-import com.quiz.quiz.repository.MockQuizRepository;
 import org.springframework.stereotype.Service;
 
 @Service
 public class SimpleQuizService implements QuizService {
-    private final MockQuizRepository quizRepository;
+    private final QuestionClient questionClient;
 
-    public SimpleQuizService(MockQuizRepository quizRepository) {
-        this.quizRepository = quizRepository;
+    public SimpleQuizService(QuestionClient questionClient) {
+        this.questionClient = questionClient;
     }
 
     @Override
     public QuestionDTO test() {
-        return quizRepository.test();
+        return questionClient.getQuestion();
     }
 }
