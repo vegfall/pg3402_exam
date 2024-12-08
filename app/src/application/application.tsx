@@ -6,10 +6,11 @@ export default function Application() {
   const [quizData, setQuizData] = useState<Question | null>(null);
 
   const sessionKey = "1234";
+  const quizUrl = "http://127.0.0.1:8000/quiz";
 
   const getCurrentQuestion = () => {
     axios
-      .get(`http://127.0.0.1:8080/quiz/${sessionKey}/current-question`)
+      .get(`${quizUrl}/${sessionKey}/current-question`)
       .then((response) => {
         setQuizData(response.data);
       })
@@ -20,7 +21,7 @@ export default function Application() {
 
   const changeQuestion = () => {
     axios
-      .put(`http://127.0.0.1:8080/quiz/${sessionKey}/next-question`)
+      .put(`${quizUrl}/${sessionKey}/next-question`)
       .then(() => {
         console.log("Successfully changed question...");
       })

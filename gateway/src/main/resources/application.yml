@@ -7,3 +7,27 @@ spring:
 
   config:
     import: "optional:consul:"
+
+  cloud:
+    gateway:
+      routes:
+        - id: quiz
+          uri: lb://quiz
+          predicates:
+            - Path=/quiz/**
+      globalcors:
+        cors-configurations:
+          "[/**]":
+            allowed-origins:
+              - "http://localhost:5173"
+            allowed-headers:
+              - "*"
+            allowed-methods:
+              - "GET"
+              - "PUT"
+            allow-credentials: true
+      default-filters:
+        - name: Retry
+          args:
+            retries: 3
+            methods: GET, PUT
