@@ -1,24 +1,25 @@
 package com.quiz.quiz.repository;
 
-import com.quiz.quiz.dto.QuestionDTO;
+import com.quiz.quiz.model.Session;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
 @Repository
 public class MockQuizRepository {
-    public QuestionDTO test() {
-        List<String> alternatives = new ArrayList<>();
+    private Session session;
 
-        alternatives.add("Oslo");
-        alternatives.add("Bergen");
-        alternatives.add("Trondheim");
-        alternatives.add("Hamar");
+    public MockQuizRepository() {
+        createSession();
+    }
 
-        return new QuestionDTO(
-                1234,
-                "What is the capital of Norway?",
-                alternatives);
+    private void createSession() {
+        session = new Session("1234", 1);
+    }
+
+    public Session getSession(String sessionKey) {
+        return Objects.equals(sessionKey, "1234")
+                ? session
+                : null;
     }
 }
