@@ -6,7 +6,7 @@
 - [x] Add a backend service to handle multiple questions
 - [x] Implement method for frontend to loop through questions
 - [x] Add actuator and consul to current services
-- [ ] Add gateway to backend
+- [x] Add gateway to backend
 - [ ] Add a backend service to check and provide results
 - [ ] Add AI service with asynchronous communication
 - [ ] Setup API call message to openai to get desired data
@@ -15,7 +15,7 @@
 ## Important Implementations
 
 - [x] Frontend
-- [ ] Gateway
+- [x] Gateway
 - [x] Synchronous communication
 - [ ] Asynchronous communication (RabbitMQ)
 - [x] Healthcheck
