@@ -5,7 +5,7 @@
 - [x] Create simple question dto and print in frontend
 - [x] Add a backend service to handle multiple questions
 - [x] Implement method for frontend to loop through questions
-- [ ] Add actuator and console to current services
+- [x] Add actuator and consul to current services
 - [ ] Add gateway to backend
 - [ ] Add a backend service to check and provide results
 - [ ] Add AI service with asynchronous communication
@@ -18,9 +18,9 @@
 - [ ] Gateway
 - [x] Synchronous communication
 - [ ] Asynchronous communication (RabbitMQ)
-- [ ] Healthcheck
-  - [ ] Actuator
-  - [ ] Consul
+- [x] Healthcheck
+  - [x] Actuator
+  - [x] Consul
 - [ ] Database (MySQL?)
 - [ ] Docker
 - [ ] Testing?
@@ -33,3 +33,13 @@
 - [ ] ResultService
 - [ ] AIService
 - [ ] UserService
+
+## Ports
+
+- Gateway: 8000
+- Consul: 8500
+
+#### Temp
+
+- QuizService: 8080
+- QuestionService: 8081
