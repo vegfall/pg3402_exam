@@ -18,10 +18,10 @@ public class QuestionClient {
                 .build();
     }
 
-    public QuestionDTO getQuestion() {
+    public QuestionDTO getQuestion(String sessionKey, Integer questionId) {
         return webClient
                 .get()
-                .uri("/current")
+                .uri("/" + sessionKey + "/" + questionId)
                 .retrieve()
                 .bodyToMono(QuestionDTO.class)
                 .block();

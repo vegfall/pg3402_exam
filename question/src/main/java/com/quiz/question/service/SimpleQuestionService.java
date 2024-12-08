@@ -13,7 +13,7 @@ public class SimpleQuestionService implements QuestionService {
     }
 
     @Override
-    public QuestionDTO getQuestion() {
-        return questionRepository.getQuestion().getDTO();
+    public QuestionDTO getQuestion(String sessionKey, Integer questionKey) {
+        return questionRepository.getQuestion(sessionKey, questionKey).getDTO();
     }
 }

@@ -3,5 +3,5 @@ package com.quiz.question.service;
 import com.quiz.question.dto.QuestionDTO;
 
 public interface QuestionService {
-    QuestionDTO getQuestion();
+    QuestionDTO getQuestion(String sessionKey, Integer questionKey);
 }

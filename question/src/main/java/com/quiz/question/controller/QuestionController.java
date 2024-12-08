@@ -5,6 +5,7 @@ import com.quiz.question.service.SimpleQuestionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,8 +18,8 @@ public class QuestionController {
         this.questionService = questionService;
     }
 
-    @GetMapping("/current")
-    public ResponseEntity<QuestionDTO> getQuestion() {
-        return new ResponseEntity<>(questionService.getQuestion(), HttpStatus.OK);
+    @GetMapping("{sessionKey}/{questionKey}")
+    public ResponseEntity<QuestionDTO> getQuestion(@PathVariable String sessionKey, @PathVariable Integer questionKey) {
+        return new ResponseEntity<>(questionService.getQuestion(sessionKey, questionKey), HttpStatus.OK);
     }
 }

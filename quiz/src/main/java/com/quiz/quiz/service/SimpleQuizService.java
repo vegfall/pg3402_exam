@@ -14,6 +14,6 @@ public class SimpleQuizService implements QuizService {
 
     @Override
     public QuestionDTO test() {
-        return questionClient.getQuestion();
+        return questionClient.getQuestion("1234", 2);
     }
 }
