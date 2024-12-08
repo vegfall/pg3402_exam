@@ -5,6 +5,7 @@
 - [x] Create simple question dto and print in frontend
 - [x] Add a backend service to handle multiple questions
 - [x] Implement method for frontend to loop through questions
+- [ ] Add actuator and console to current services
 - [ ] Add gateway to backend
 - [ ] Add a backend service to check and provide results
 - [ ] Add AI service with asynchronous communication
