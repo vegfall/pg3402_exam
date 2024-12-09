@@ -3,23 +3,31 @@ package com.quiz.quiz.repository;
 import com.quiz.quiz.model.Session;
 import org.springframework.stereotype.Repository;
 
+import java.util.Hashtable;
+import java.util.Map;
 import java.util.Objects;
 
 @Repository
 public class MockQuizRepository {
-    private Session session;
+    private Map<Long, Session> mockSessionDatabase;
 
     public MockQuizRepository() {
-        createSession();
-    }
-
-    private void createSession() {
-        session = new Session(1L, "1234", "Random", 1);
+        mockSessionDatabase = new Hashtable<>();
     }
 
     public Session getSession(String sessionKey) {
-        return Objects.equals(sessionKey, "1234")
-                ? session
-                : null;
+        for (Session session : mockSessionDatabase.values()) {
+            if (Objects.equals(session.getSessionKey(), sessionKey)) {
+                return session;
+            }
+        }
+
+        return null;
+    }
+
+    public Session insertSession(Session session) {
+        mockSessionDatabase.put(session.getSessionId(), session);
+
+        return mockSessionDatabase.get(session.getSessionId());
     }
 }

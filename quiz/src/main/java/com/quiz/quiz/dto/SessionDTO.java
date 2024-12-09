@@ -8,6 +8,7 @@ import lombok.Getter;
 public class SessionDTO {
     private String sessionKey;
     private String theme;
+    private int numberOfAlternatives;
     //Does DTO need currentQuestionKey?
     //private int currentQuestionKey;
 }

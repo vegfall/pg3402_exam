@@ -1,6 +1,8 @@
 package com.quiz.quiz.controller;
 
 import com.quiz.quiz.dto.QuestionDTO;
+import com.quiz.quiz.dto.SessionDTO;
+import com.quiz.quiz.dto.request.CreateSessionRequest;
 import com.quiz.quiz.service.SimpleQuizService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,15 @@ public class QuizController {
 
     public QuizController(SimpleQuizService quizService) {
         this.quizService = quizService;
+    }
+
+    @PostMapping("create-session")
+    public ResponseEntity<SessionDTO> postNewSession(@RequestBody CreateSessionRequest request) {
+        SessionDTO session = quizService.postNewSession(request);
+
+        return session != null
+                ? new ResponseEntity<>(session, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping("{sessionKey}/current-question")
