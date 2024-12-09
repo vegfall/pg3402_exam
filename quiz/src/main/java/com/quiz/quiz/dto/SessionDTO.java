@@ -7,5 +7,7 @@ import lombok.Getter;
 @Getter
 public class SessionDTO {
     private String sessionKey;
-    private int currentQuestionKey;
+    private String theme;
+    //Does DTO need currentQuestionKey?
+    //private int currentQuestionKey;
 }

@@ -14,7 +14,7 @@ public class MockQuizRepository {
     }
 
     private void createSession() {
-        session = new Session("1234", 1);
+        session = new Session(1L, "1234", "Random", 1);
     }
 
     public Session getSession(String sessionKey) {

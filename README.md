@@ -7,6 +7,8 @@
 - [x] Implement method for frontend to loop through questions
 - [x] Add actuator and consul to current services
 - [x] Add gateway to backend
+- [ ] Add a way to create a new quiz session
+- [ ] Store quiz session in a database
 - [ ] Add a backend service to check and provide results
 - [ ] Add AI service with asynchronous communication
 - [ ] Setup API call message to openai to get desired data
@@ -34,8 +36,13 @@
 - [ ] AIService
 - [ ] UserService
 
+## Important
+
+- [ ] Make sure solution is stateless
+
 ## Ports
 
+- Frontend: 3000
 - Gateway: 8000
 - Consul: 8500
 

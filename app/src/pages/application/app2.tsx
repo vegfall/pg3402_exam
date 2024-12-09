@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
-import Question from "../types/question";
+import Question from "../../types/question";
 
-export default function Application() {
+export default function App2() {
   const [quizData, setQuizData] = useState<Question | null>(null);
 
   const sessionKey = "1234";
