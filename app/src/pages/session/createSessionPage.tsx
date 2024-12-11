@@ -16,7 +16,7 @@ export default function CreateSessionPage() {
     const request: CreateSessionRequest = { theme, numberOfAlternatives };
 
     quizApi
-      .post("create-session", request)
+      .post("session/create", request)
       .then((response) => {
         const session: Session = response.data;
 
