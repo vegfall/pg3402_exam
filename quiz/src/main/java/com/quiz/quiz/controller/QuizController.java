@@ -4,12 +4,10 @@ import com.quiz.quiz.dto.QuestionDTO;
 import com.quiz.quiz.dto.SessionDTO;
 import com.quiz.quiz.dto.request.CreateSessionRequest;
 import com.quiz.quiz.service.SimpleQuizService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Slf4j
 @RestController
 @RequestMapping("/quiz")
 public class QuizController {
@@ -37,7 +35,7 @@ public class QuizController {
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("{sessionKey}/current-question")
+    @GetMapping("session/{sessionKey}/current-question")
     public ResponseEntity<QuestionDTO> getCurrentQuestion(@PathVariable String sessionKey) {
         QuestionDTO question = quizService.getCurrentQuestion(sessionKey);
 
@@ -46,7 +44,7 @@ public class QuizController {
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PutMapping("{sessionKey}/next-question")
+    @PutMapping("session/{sessionKey}/next-question")
     public ResponseEntity<HttpStatus> putNextQuestion(@PathVariable String sessionKey) {
         quizService.putNextQuestion(sessionKey);
 

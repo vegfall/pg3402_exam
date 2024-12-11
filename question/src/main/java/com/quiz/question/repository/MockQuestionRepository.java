@@ -16,8 +16,8 @@ public class MockQuestionRepository {
     }
 
     private void createMockQuestionDatabase() {
-        mockQuestionDatabase.put(1, new Question(
-                1L,
+        mockQuestionDatabase.put(0, new Question(
+                0L,
                 1,
                 "What is the capital of Norway?",
                 Arrays.asList(
@@ -28,8 +28,8 @@ public class MockQuestionRepository {
                 )
         ));
 
-        mockQuestionDatabase.put(2, new Question(
-                2L,
+        mockQuestionDatabase.put(1, new Question(
+                1L,
                 2,
                 "Who was the first emperor of Rome?",
                 Arrays.asList(
@@ -39,8 +39,8 @@ public class MockQuestionRepository {
                 )
         ));
 
-        mockQuestionDatabase.put(3, new Question(
-                3L,
+        mockQuestionDatabase.put(2, new Question(
+                2L,
                 3,
                 "Does this project follow microservice architecture?",
                 Arrays.asList(

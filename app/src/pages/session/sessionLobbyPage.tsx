@@ -31,7 +31,7 @@ export default function SessionLobbyPage() {
 
   const startQuiz = () => {
     if (session) {
-      navigate("/start");
+      navigate("/play");
     }
   };
 
