@@ -10,9 +10,11 @@ import java.util.Objects;
 @Repository
 public class MockQuizRepository {
     private Map<Long, Session> mockSessionDatabase;
+    private Long mockIdCounter;
 
     public MockQuizRepository() {
         mockSessionDatabase = new Hashtable<>();
+        mockIdCounter = 0L;
     }
 
     public Session getSession(String sessionKey) {
@@ -26,6 +28,8 @@ public class MockQuizRepository {
     }
 
     public Session insertSession(Session session) {
+        session.setSessionId(mockIdCounter++);
+
         mockSessionDatabase.put(session.getSessionId(), session);
 
         return mockSessionDatabase.get(session.getSessionId());

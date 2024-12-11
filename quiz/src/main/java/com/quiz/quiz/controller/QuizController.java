@@ -4,6 +4,7 @@ import com.quiz.quiz.dto.QuestionDTO;
 import com.quiz.quiz.dto.SessionDTO;
 import com.quiz.quiz.dto.request.CreateSessionRequest;
 import com.quiz.quiz.service.SimpleQuizService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

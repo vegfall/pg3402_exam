@@ -6,8 +6,10 @@ import com.quiz.quiz.dto.SessionDTO;
 import com.quiz.quiz.dto.request.CreateSessionRequest;
 import com.quiz.quiz.model.Session;
 import com.quiz.quiz.repository.MockQuizRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class SimpleQuizService implements QuizService {
     private final MockQuizRepository quizRepository;
@@ -21,6 +23,7 @@ public class SimpleQuizService implements QuizService {
     @Override
     public SessionDTO postNewSession(CreateSessionRequest sessionRequest) {
         String sessionKey = generateSessionKey();
+
         Session createdSession = new Session(
                 sessionKey, sessionRequest.getTheme(), sessionRequest.getNumberOfAlternatives()
         );
