@@ -9,7 +9,7 @@ import java.util.Objects;
 
 @Repository
 public class MockQuizRepository {
-    private Map<Long, Session> mockSessionDatabase;
+    private final Map<Long, Session> mockSessionDatabase;
     private Long mockIdCounter;
 
     public MockQuizRepository() {

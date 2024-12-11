@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { quizApi } from "../config/axiosApi";
 import { Session } from "../../types/session";
 import { CreateSessionRequest } from "../../types/createSessionRequest";
+import Cookie from "js-cookie";
+
+//https://www.npmjs.com/package/js-cookie
 
 export default function CreateSessionPage() {
   const [theme, setTheme] = useState<string>("");
@@ -16,7 +19,10 @@ export default function CreateSessionPage() {
       .post("create-session", request)
       .then((response) => {
         const session: Session = response.data;
-        navigate(`/session/${session.sessionKey}`, { state: session });
+
+        Cookie.set("sessionKey", session.sessionKey);
+
+        navigate("/lobby", { state: session });
       })
       .catch((error) => {
         console.error("Error creating session:", error);
