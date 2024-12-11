@@ -43,6 +43,10 @@ export default function SessionLobbyPage() {
           <p>
             <strong>Theme:</strong> {session.theme}
           </p>
+          <p>
+            <strong>Number of Alternatives:</strong>{" "}
+            {session.numberOfAlternatives}
+          </p>
           <button onClick={startQuiz}>Start Quiz</button>
         </div>
       ) : (
