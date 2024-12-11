@@ -30,9 +30,11 @@ public class QuizController {
 
     @GetMapping("session/info/{sessionKey}")
     public ResponseEntity<SessionDTO> getSessionInfo(@PathVariable String sessionKey) {
-        log.info("HEI");
+        SessionDTO session = quizService.getSession(sessionKey);
 
-        return null;
+        return session != null
+                ? new ResponseEntity<>(session, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("{sessionKey}/current-question")

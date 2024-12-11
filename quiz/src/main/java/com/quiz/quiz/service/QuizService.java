@@ -6,6 +6,7 @@ import com.quiz.quiz.dto.request.CreateSessionRequest;
 
 public interface QuizService {
     SessionDTO postNewSession(CreateSessionRequest session);
+    SessionDTO getSession(String sessionKey);
     QuestionDTO getCurrentQuestion(String sessionKey);
     void putNextQuestion(String sessionKey);
     String generateSessionKey();

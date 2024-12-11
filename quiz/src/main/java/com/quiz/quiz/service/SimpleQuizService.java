@@ -32,6 +32,11 @@ public class SimpleQuizService implements QuizService {
     }
 
     @Override
+    public SessionDTO getSession(String sessionKey) {
+        return quizRepository.getSession(sessionKey).getDTO();
+    }
+
+    @Override
     public QuestionDTO getCurrentQuestion(String sessionKey) {
         int currentQuestionKey = quizRepository.getSession(sessionKey).getCurrentQuestionKey();
 

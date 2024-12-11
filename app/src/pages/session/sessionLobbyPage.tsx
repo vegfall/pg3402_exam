@@ -39,8 +39,10 @@ export default function SessionLobbyPage() {
     <div>
       {session ? (
         <div>
-          <h1>{session?.sessionKey} lobby</h1>
-          <p>Theme: {session.theme}</p>
+          <h1>Quiz Lobby for Session({session?.sessionKey})...</h1>
+          <p>
+            <strong>Theme:</strong> {session.theme}
+          </p>
           <button onClick={startQuiz}>Start Quiz</button>
         </div>
       ) : (
