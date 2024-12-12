@@ -10,5 +10,5 @@ import java.util.List;
 public class QuestionDTO {
     private int questionKey;
     private String questionText;
-    private List<String> alternatives;
+    private List<AlternativeDTO> alternatives;
 }

@@ -20,6 +20,10 @@ public class QuestionController {
 
     @GetMapping("{sessionKey}/{questionKey}")
     public ResponseEntity<QuestionDTO> getQuestion(@PathVariable String sessionKey, @PathVariable Integer questionKey) {
-        return new ResponseEntity<>(questionService.getQuestion(sessionKey, questionKey), HttpStatus.OK);
+        QuestionDTO question = questionService.getQuestion(sessionKey, questionKey);
+
+    return question != null
+            ? new ResponseEntity<>(questionService.getQuestion(sessionKey, questionKey), HttpStatus.OK)
+            : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

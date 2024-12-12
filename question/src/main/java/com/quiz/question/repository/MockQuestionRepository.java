@@ -1,5 +1,6 @@
 package com.quiz.question.repository;
 
+import com.quiz.question.model.Alternative;
 import com.quiz.question.model.Question;
 import org.springframework.stereotype.Repository;
 
@@ -21,10 +22,10 @@ public class MockQuestionRepository {
                 1,
                 "What is the capital of Norway?",
                 Arrays.asList(
-                    "Oslo",
-                    "Stockholm",
-                    "Copenhagen",
-                    "Reykjavik"
+                    new Alternative(1L, 1,"Oslo", true, "Yes"),
+                    new Alternative(2L, 2,"Stockholm", false, "No"),
+                    new Alternative(3L, 3,"Copenhagen", false, "No"),
+                    new Alternative(4L, 4,"Reykjavik", false, "No")
                 )
         ));
 
@@ -33,9 +34,9 @@ public class MockQuestionRepository {
                 2,
                 "Who was the first emperor of Rome?",
                 Arrays.asList(
-                    "Caesar",
-                    "Cato",
-                    "Augustus"
+                    new Alternative(5L, 1,"Cato", false, "No"),
+                    new Alternative(6L, 2,"Caesar", false, "No"),
+                    new Alternative(7L, 3,"Augustus", true, "Yes")
                 )
         ));
 
@@ -44,8 +45,8 @@ public class MockQuestionRepository {
                 3,
                 "Does this project follow microservice architecture?",
                 Arrays.asList(
-                    "Yes",
-                    "No"
+                    new Alternative(8L, 1,"Yes", true, "Yes"),
+                    new Alternative(9L, 2,"No", false, "No")
                 )
         ));
     }

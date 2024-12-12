@@ -3,6 +3,7 @@ import Question from "../../types/question";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import { quizApi } from "../config/axiosApi";
+import { Alternative } from "../../types/alternative";
 
 export default function SessionPlayPage() {
   const [question, setQuestion] = useState<Question | null>(null);
@@ -49,8 +50,8 @@ export default function SessionPlayPage() {
       });
   };
 
-  const handleAlternativeClick = (alternative: string) => {
-    alert(`You selected alternative: ${alternative}`);
+  const handleAlternativeClick = (alternative: Alternative) => {
+    alert(`You selected alternative: ${alternative.alternativeText}`);
   };
 
   return (
@@ -65,7 +66,7 @@ export default function SessionPlayPage() {
                 key={index}
                 onClick={() => handleAlternativeClick(alternative)}
               >
-                {alternative}
+                {alternative.alternativeKey}: {alternative.alternativeText}
               </button>
             ))}
           </div>
