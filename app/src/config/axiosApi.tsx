@@ -9,7 +9,3 @@ export const quizApi = axios.create({
 export const userApi = axios.create({
   baseURL: `${apiUrl}user/`,
 });
-
-export const resultApi = axios.create({
-  baseURL: `${apiUrl}result/`,
-});

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { quizApi } from "../config/axiosApi";
+import { quizApi } from "../../config/axiosApi";
 import { Session } from "../../types/session";
 import { CreateSessionRequest } from "../../types/createSessionRequest";
 import Cookie from "js-cookie";

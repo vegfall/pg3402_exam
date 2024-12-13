@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Question from "../../types/question";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
-import { quizApi } from "../config/axiosApi";
+import { quizApi } from "../../config/axiosApi";
 import { Alternative } from "../../types/alternative";
 
 export default function SessionPlayPage() {

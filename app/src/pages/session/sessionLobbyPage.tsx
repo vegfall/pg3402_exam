@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Session } from "../../types/session";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
-import { quizApi } from "../config/axiosApi";
+import { quizApi } from "../../config/axiosApi";
 
 export default function SessionLobbyPage() {
   const [session, setSession] = useState<Session | null>(null);
