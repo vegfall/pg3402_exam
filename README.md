@@ -7,7 +7,9 @@
 - [x] Implement method for frontend to loop through questions
 - [x] Add actuator and consul to current services
 - [x] Add gateway to backend
-- [ ] Add a way to create a new quiz session
+- [x] Add a way to create a new quiz session
+- [ ] Add oauth to authenticate user
+- [ ] Check backend received a unique username for user
 - [ ] Store quiz session in a database
 - [ ] Add a backend service to check and provide results
 - [ ] Add AI service with asynchronous communication
@@ -34,7 +36,7 @@
 - [x] QuestionService
 - [ ] ResultService
 - [ ] AIService
-- [ ] UserService
+- [x] UserService
 
 ## Important
 
@@ -50,3 +52,6 @@
 
 - QuizService: 8080
 - QuestionService: 8081
+- ResultService: 8082
+- UserService: 8083
+- AIService: 8084
