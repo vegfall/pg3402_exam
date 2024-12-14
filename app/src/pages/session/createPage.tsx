@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { quizApi } from "../config/axiosApi";
 import { Session } from "../../types/session";
-import { CreateSessionRequest } from "../../types/createSessionRequest";
+import { CreateSessionRequest } from "../../types/request/createSessionRequest";
 import Cookie from "js-cookie";
 
 //https://www.npmjs.com/package/js-cookie
@@ -18,6 +18,8 @@ export default function CreatePage() {
       numberOfAlternatives,
       username,
     };
+
+    Cookie.set("username", username);
 
     quizApi
       .post("session/create", request)

@@ -1,8 +1,10 @@
 package com.quiz.quiz.controller;
 
 import com.quiz.quiz.dto.QuestionDTO;
+import com.quiz.quiz.dto.ResultDTO;
 import com.quiz.quiz.dto.SessionDTO;
 import com.quiz.quiz.dto.request.CreateSessionRequest;
+import com.quiz.quiz.dto.request.PostAnswerRequest;
 import com.quiz.quiz.service.SimpleQuizService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,5 +51,10 @@ public class QuizController {
         quizService.putNextQuestion(sessionKey);
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("session/{sessionKey}/post-answer")
+    public ResponseEntity<ResultDTO> postAnswer(@PathVariable String sessionKey, @RequestBody PostAnswerRequest request) {
+        return new ResponseEntity<>(new ResultDTO(1, "Sorry :) Hardcoded"), HttpStatus.OK);
     }
 }
