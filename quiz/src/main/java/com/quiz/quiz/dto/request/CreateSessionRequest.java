@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class CreateSessionRequest {
     private String theme;
     private Integer numberOfAlternatives;
+    private String username;
 }

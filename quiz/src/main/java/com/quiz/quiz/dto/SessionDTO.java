@@ -6,9 +6,10 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class SessionDTO {
-    private String sessionKey;
-    private String theme;
-    private int numberOfAlternatives;
+    private final String sessionKey;
+    private final String theme;
+    private final int numberOfAlternatives;
+    private final String username;
     //Does DTO need currentQuestionKey?
     //private int currentQuestionKey;
 }

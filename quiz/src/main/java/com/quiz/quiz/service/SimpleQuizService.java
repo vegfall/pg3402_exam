@@ -25,7 +25,7 @@ public class SimpleQuizService implements QuizService {
         String sessionKey = generateSessionKey();
 
         Session createdSession = new Session(
-                sessionKey, sessionRequest.getTheme(), sessionRequest.getNumberOfAlternatives()
+                sessionKey, sessionRequest.getTheme(), sessionRequest.getNumberOfAlternatives(), sessionRequest.getUsername()
         );
 
         return quizRepository.insertSession(createdSession).getDTO();

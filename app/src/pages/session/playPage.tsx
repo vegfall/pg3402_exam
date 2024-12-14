@@ -5,7 +5,7 @@ import Cookies from "js-cookie";
 import { quizApi } from "../config/axiosApi";
 import { Alternative } from "../../types/alternative";
 
-export default function SessionPlayPage() {
+export default function PlayPage() {
   const [question, setQuestion] = useState<Question | null>(null);
   const navigate = useNavigate();
 

@@ -15,11 +15,12 @@ public class Session {
     private final String sessionKey;
     private final String theme;
     private final int numberOfAlternatives;
+    private final String username;
     //private final bool timed;
     //private final DateTime creationTime;
     private int currentQuestionKey;
 
     public SessionDTO getDTO() {
-        return new SessionDTO(sessionKey, theme, numberOfAlternatives);
+        return new SessionDTO(sessionKey, theme, numberOfAlternatives, username);
     }
 }

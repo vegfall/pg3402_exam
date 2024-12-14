@@ -6,14 +6,18 @@ import { CreateSessionRequest } from "../../types/createSessionRequest";
 import Cookie from "js-cookie";
 
 //https://www.npmjs.com/package/js-cookie
-
-export default function CreateSessionPage() {
+export default function CreatePage() {
   const [theme, setTheme] = useState<string>("");
   const [numberOfAlternatives, setNumberOfAlternatives] = useState<number>(4);
+  const [username, setUsername] = useState<string>("");
   const navigate = useNavigate();
 
   const createSession = () => {
-    const request: CreateSessionRequest = { theme, numberOfAlternatives };
+    const request: CreateSessionRequest = {
+      theme,
+      numberOfAlternatives,
+      username,
+    };
 
     quizApi
       .post("session/create", request)
@@ -32,6 +36,18 @@ export default function CreateSessionPage() {
   return (
     <div>
       <h1>Welcome! Please choose settings for quiz...</h1>
+      <div>
+        <label>
+          Theme: (Recommended to use github username for consistency)
+          <br />
+          <input
+            type={"text"}
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder={"Username"}
+          />
+        </label>
+      </div>
       <div>
         <label>
           Theme:

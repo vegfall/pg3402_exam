@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import { quizApi } from "../config/axiosApi";
 
-export default function SessionLobbyPage() {
+export default function LobbyPage() {
   const [session, setSession] = useState<Session | null>(null);
   const navigate = useNavigate();
 
@@ -39,7 +39,10 @@ export default function SessionLobbyPage() {
     <div>
       {session ? (
         <div>
-          <h1>Quiz Lobby for Session({session?.sessionKey})...</h1>
+          <h1>
+            Welcome {session?.username} :) Quiz Lobby for Session(
+            {session?.sessionKey})...
+          </h1>
           <p>
             <strong>Theme:</strong> {session.theme}
           </p>
