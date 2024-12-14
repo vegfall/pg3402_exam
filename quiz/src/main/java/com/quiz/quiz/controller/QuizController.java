@@ -5,7 +5,7 @@ import com.quiz.quiz.dto.ResultDTO;
 import com.quiz.quiz.dto.SessionDTO;
 import com.quiz.quiz.dto.request.CreateSessionRequest;
 import com.quiz.quiz.dto.request.PostAnswerRequest;
-import com.quiz.quiz.service.SimpleQuizService;
+import com.quiz.quiz.service.SingleplayerQuizService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/quiz")
 public class QuizController {
-    private final SimpleQuizService quizService;
+    private final SingleplayerQuizService quizService;
 
-    public QuizController(SimpleQuizService quizService) {
+    public QuizController(SingleplayerQuizService quizService) {
         this.quizService = quizService;
     }
 
@@ -54,7 +54,11 @@ public class QuizController {
     }
 
     @PostMapping("session/{sessionKey}/post-answer")
-    public ResponseEntity<ResultDTO> postAnswer(@PathVariable String sessionKey, @RequestBody PostAnswerRequest request) {
-        return new ResponseEntity<>(new ResultDTO(1, "Sorry :) Hardcoded"), HttpStatus.OK);
+    public ResponseEntity<ResultDTO> postAnswer(@PathVariable String sessionKey, @RequestBody PostAnswerRequest answer) {
+        ResultDTO result = quizService.postAnswer(sessionKey, answer);
+
+        return result != null
+                ? new ResponseEntity<>(result, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

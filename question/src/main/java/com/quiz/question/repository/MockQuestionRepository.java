@@ -8,16 +8,22 @@ import java.util.*;
 
 @Repository
 public class MockQuestionRepository {
-    Dictionary<Integer, Question> mockQuestionDatabase;
+    Dictionary<String, Dictionary<Integer, Question>> mockQuestionDatabase;
+    Dictionary<Integer, Question> mockQuestionTable;
+
+
 
     public MockQuestionRepository() {
         mockQuestionDatabase = new Hashtable<>();
+        mockQuestionTable = new Hashtable<>();
 
         createMockQuestionDatabase();
+
+        mockQuestionDatabase.put("1234", mockQuestionTable);
     }
 
     private void createMockQuestionDatabase() {
-        mockQuestionDatabase.put(0, new Question(
+        mockQuestionTable.put(0, new Question(
                 0L,
                 1,
                 "What is the capital of Norway?",
@@ -29,7 +35,7 @@ public class MockQuestionRepository {
                 )
         ));
 
-        mockQuestionDatabase.put(1, new Question(
+        mockQuestionTable.put(1, new Question(
                 1L,
                 2,
                 "Who was the first emperor of Rome?",
@@ -40,7 +46,7 @@ public class MockQuestionRepository {
                 )
         ));
 
-        mockQuestionDatabase.put(2, new Question(
+        mockQuestionTable.put(2, new Question(
                 2L,
                 3,
                 "Does this project follow microservice architecture?",
@@ -52,6 +58,18 @@ public class MockQuestionRepository {
     }
 
     public Question getQuestion(String sessionKey, Integer questionKey) {
-        return Objects.equals(sessionKey, "1234") ? mockQuestionDatabase.get(questionKey) : null;
+        return mockQuestionDatabase.get(sessionKey).get(questionKey);
+    }
+
+    public Alternative getCorrectAlternative(String sessionKey, Integer questionKey) {
+        Question currentQuestion = mockQuestionDatabase.get(sessionKey).get(questionKey);
+
+        for (Alternative alternative : currentQuestion.getAlternatives()) {
+            if (alternative.isCorrect()) {
+                return alternative;
+            }
+        }
+
+        return null;
     }
 }

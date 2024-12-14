@@ -5,6 +5,8 @@ package com.quiz.quiz.client;
 //https://www.javacodegeeks.com/2018/03/doing-stuff-with-spring-webflux.html
 
 import com.quiz.quiz.dto.QuestionDTO;
+import com.quiz.quiz.dto.ResultDTO;
+import com.quiz.quiz.dto.request.PostAnswerRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -18,12 +20,22 @@ public class QuestionClient {
                 .build();
     }
 
-    public QuestionDTO getQuestion(String sessionKey, Integer questionId) {
+    public QuestionDTO getQuestion(String sessionKey, Integer questionKey) {
         return webClient
                 .get()
-                .uri("/" + sessionKey + "/" + questionId)
+                .uri("/" + sessionKey + "/" + questionKey)
                 .retrieve()
                 .bodyToMono(QuestionDTO.class)
+                .block();
+    }
+
+    public ResultDTO postAnswer(String sessionKey, Integer questionKey, PostAnswerRequest answer) {
+        return webClient
+                .post()
+                .uri("/" + sessionKey + "/" + questionKey + "/post-answer")
+                .bodyValue(answer)
+                .retrieve()
+                .bodyToMono(ResultDTO.class)
                 .block();
     }
 }
