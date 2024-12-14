@@ -7,9 +7,11 @@
 - [x] Implement method for frontend to loop through questions
 - [x] Add actuator and consul to current services
 - [x] Add gateway to backend
-- [ ] Add a way to create a new quiz session
+- [x] Add a way to create a new quiz session
+- [x] Add result service
+- [ ] Add asynchronous communication between result and question
+- [ ] Add way for storing and displaying result after a round
 - [ ] Store quiz session in a database
-- [ ] Add a backend service to check and provide results
 - [ ] Add AI service with asynchronous communication
 - [ ] Setup API call message to openai to get desired data
 - [ ] ...
@@ -32,13 +34,14 @@
 
 - [x] QuizService
 - [x] QuestionService
-- [ ] ResultService
+- [x] ResultService
 - [ ] AIService
 - [ ] UserService
 
 ## Important
 
 - [ ] Make sure solution is stateless
+- [ ] Make sure the ports are not hardcoded for services
 
 ## Ports
 
@@ -50,3 +53,5 @@
 
 - QuizService: 8080
 - QuestionService: 8081
+- ResultService: 8082
+- AIService: 8083
