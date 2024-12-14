@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 
 //https://www.rabbitmq.com/tutorials/tutorial-four-spring-amqp
 @Configuration
-public class RabbitMQConfig {
+public class AMQPConfig {
     @Value("${amqp.exchange.name}")
     private String exchangeName;
 
