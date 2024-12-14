@@ -7,24 +7,34 @@ import { Alternative } from "../../types/alternative";
 
 export default function PlayPage() {
   const [question, setQuestion] = useState<Question | null>(null);
+  const [selectedAlternative, setSelectedAlternative] = useState<number | null>(
+    null,
+  );
   const navigate = useNavigate();
 
   useEffect(() => {
-    getCurrentQuestion();
-  }, []);
-
-  const getCurrentQuestion = () => {
     const sessionKey = Cookies.get("sessionKey");
 
+    if (!sessionKey) {
+      alert("Missing session key. Returning to start...");
+      navigate("/");
+      return;
+    }
+
+    getCurrentQuestion(sessionKey);
+  }, [navigate]);
+
+  const getCurrentQuestion = (sessionKey: string) => {
     quizApi
       .get<Question>(`session/${sessionKey}/current-question`)
       .then((response) => {
         setQuestion(response.data);
+        setSelectedAlternative(null); // Reset selected alternative for the new question
       })
       .catch((error) => {
         console.error("Failed to get question:", error);
-        alert("Failed to get question. Returning to lobby...");
-        navigate("/lobby");
+        alert("Failed to get question. Returning to start...");
+        navigate("/");
       });
   };
 
@@ -40,18 +50,23 @@ export default function PlayPage() {
     quizApi
       .put(`session/${sessionKey}/next-question`)
       .then(() => {
-        alert(
-          'Next question is ready... Click "Get Current Question" to load it.',
-        );
+        getCurrentQuestion(sessionKey); // Fetch the next question
       })
       .catch((error) => {
         console.error("Failed to change question:", error);
-        alert("Failed to change questions...");
+        alert("Failed to change question. Returning to start...");
+        navigate("/");
       });
   };
 
   const handleAlternativeClick = (alternative: Alternative) => {
+    setSelectedAlternative(alternative.alternativeKey);
+
     alert(`You selected alternative: ${alternative.alternativeText}`);
+  };
+
+  const endSession = () => {
+    navigate("/result");
   };
 
   return (
@@ -61,21 +76,31 @@ export default function PlayPage() {
         <div>
           <h2>{question.questionText}</h2>
           <div>
-            {question.alternatives.map((alternative, index) => (
+            {question.alternatives.map((alternative) => (
               <button
-                key={index}
+                key={alternative.alternativeKey}
                 onClick={() => handleAlternativeClick(alternative)}
+                style={{
+                  backgroundColor:
+                    selectedAlternative === alternative.alternativeKey
+                      ? "green"
+                      : "",
+                }}
               >
                 {alternative.alternativeKey}: {alternative.alternativeText}
               </button>
             ))}
           </div>
+          {selectedAlternative !== null && (
+            <div>
+              <button onClick={putNextQuestion}>Next Question</button>
+              <button onClick={endSession}>Quit</button>
+            </div>
+          )}
         </div>
       ) : (
         <p>Loading question...</p>
       )}
-      <button onClick={getCurrentQuestion}>Get Current Question</button>
-      <button onClick={putNextQuestion}>Next Question</button>
     </div>
   );
 }
