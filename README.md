@@ -10,7 +10,7 @@
 - [x] Add a way to create a new quiz session
 - [x] Add result service
 - [x] Add asynchronous communication between result and question
-- [ ] Add way for storing and displaying result after a game
+- [x] Add way for storing and displaying result after a game
 - [ ] Store data in databases
 - [ ] Add AI service with asynchronous communication
 - [ ] Setup API call message to openai to get desired data
@@ -49,6 +49,8 @@
 - [ ] Make all models and dto that can final?
 - [ ] Should ResultDTO sent over RabbitMQ also be serializable?
 - [ ] Make a generated session key
+- [ ] Change the session status when quiz is created and end if user get's result
+- [ ] Add defaults to session create page?
 
 ## Ports
 

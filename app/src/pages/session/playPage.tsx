@@ -6,6 +6,7 @@ import { quizApi } from "../config/axiosApi";
 import { Alternative } from "../../types/alternative";
 import { PostAnswerRequest } from "../../types/request/postAnswerRequest";
 import Result from "../../types/result";
+import { SessionStatus } from "../../types/enum/sessionStatus";
 
 export default function PlayPage() {
   const [question, setQuestion] = useState<Question | null>(null);
@@ -31,6 +32,21 @@ export default function PlayPage() {
     getCurrentQuestion(sessionKey);
   }, [navigate]);
 
+  const checkSessionStatus = async (
+    sessionKey: string,
+  ): Promise<SessionStatus> => {
+    try {
+      const response = await quizApi.get<SessionStatus>(
+        `session/${sessionKey}/status`,
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Failed to get session status:", error);
+      alert("An error occurred while checking session status.");
+      return SessionStatus.COMPLETED;
+    }
+  };
+
   const getCurrentQuestion = (sessionKey: string) => {
     quizApi
       .get<Question>(`session/${sessionKey}/current-question`)
@@ -47,7 +63,7 @@ export default function PlayPage() {
       });
   };
 
-  const putNextQuestion = () => {
+  const putNextQuestion = async () => {
     const sessionKey = Cookies.get("sessionKey");
 
     if (!sessionKey) {
@@ -56,16 +72,25 @@ export default function PlayPage() {
       return;
     }
 
-    quizApi
-      .put(`session/${sessionKey}/next-question`)
-      .then(() => {
-        getCurrentQuestion(sessionKey);
-      })
-      .catch((error) => {
-        console.error("Failed to change question:", error);
-        alert("Failed to change question. Returning to start...");
-        navigate("/");
-      });
+    const sessionStatus = await checkSessionStatus(sessionKey);
+
+    if (sessionStatus === SessionStatus.COMPLETED) {
+      navigate("/result");
+      return;
+    }
+
+    if (sessionStatus === SessionStatus.ONGOING) {
+      quizApi
+        .put(`session/${sessionKey}/next-question`)
+        .then(() => {
+          getCurrentQuestion(sessionKey);
+        })
+        .catch((error) => {
+          console.error("Failed to change question:", error);
+          alert("Failed to change question. Returning to start...");
+          navigate("/");
+        });
+    }
   };
 
   const handleAlternativeClick = (alternative: Alternative) => {

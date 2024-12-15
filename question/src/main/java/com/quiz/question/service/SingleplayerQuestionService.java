@@ -89,4 +89,15 @@ public class SingleplayerQuestionService implements QuestionService {
 
         return new RevealScoreDTO(revealQuestions, score.getScore());
     }
+
+    @Override
+    public boolean checkMoreQuestions(String sessionKey, int currentQuestionKey) {
+        for (Question question : questionRepository.getAllQuestions(sessionKey)) {
+            if (question.getQuestionKey() > currentQuestionKey + 1) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

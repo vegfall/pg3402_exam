@@ -7,7 +7,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @Getter
-public class QuestionDTO {
+public class questionDTO {
     private int questionKey;
     private String questionText;
     private List<AlternativeDTO> alternatives;

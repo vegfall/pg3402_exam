@@ -1,13 +1,14 @@
 package com.quiz.quiz.service;
 
 import com.quiz.quiz.client.QuestionClient;
-import com.quiz.quiz.dto.QuestionDTO;
-import com.quiz.quiz.dto.ResultDTO;
+import com.quiz.quiz.dto.questionDTO;
+import com.quiz.quiz.dto.resultDTO;
 import com.quiz.quiz.dto.SessionDTO;
-import com.quiz.quiz.dto.conclusion.RevealScoreDTO;
+import com.quiz.quiz.dto.conclusion.revealScoreDTO;
 import com.quiz.quiz.dto.request.CreateSessionRequest;
 import com.quiz.quiz.dto.request.PostAnswerRequest;
 import com.quiz.quiz.model.Session;
+import com.quiz.quiz.model.SessionStatus;
 import com.quiz.quiz.repository.MockQuizRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -40,7 +41,7 @@ public class SingleplayerQuizService implements QuizService {
     }
 
     @Override
-    public QuestionDTO getCurrentQuestion(String sessionKey) {
+    public questionDTO getCurrentQuestion(String sessionKey) {
         int currentQuestionKey = quizRepository.getSession(sessionKey).getCurrentQuestionKey();
 
         return questionClient.getQuestion(sessionKey, currentQuestionKey);
@@ -58,14 +59,26 @@ public class SingleplayerQuizService implements QuizService {
     }
 
     @Override
-    public ResultDTO postAnswer(String sessionKey, PostAnswerRequest answer) {
+    public resultDTO postAnswer(String sessionKey, PostAnswerRequest answer) {
         int currentQuestionKey = quizRepository.getSession(sessionKey).getCurrentQuestionKey();
 
         return questionClient.postAnswer(sessionKey, currentQuestionKey, answer);
     }
 
     @Override
-    public RevealScoreDTO getScore(String sessionKey, String username) {
+    public revealScoreDTO getScore(String sessionKey, String username) {
         return questionClient.getScore(sessionKey, username);
+    }
+
+    @Override
+    public SessionStatus getStatus(String sessionKey) {
+        SessionStatus status = SessionStatus.ONGOING;
+        Session session = quizRepository.getSession(sessionKey);
+
+        if (!questionClient.checkMoreQuestions(sessionKey, session.getCurrentQuestionKey())) {
+            status = SessionStatus.COMPLETED;
+        }
+
+        return status;
     }
 }

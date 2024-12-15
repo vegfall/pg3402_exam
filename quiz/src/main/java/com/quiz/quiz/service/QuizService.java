@@ -1,18 +1,21 @@
 package com.quiz.quiz.service;
 
-import com.quiz.quiz.dto.QuestionDTO;
-import com.quiz.quiz.dto.ResultDTO;
+import com.quiz.quiz.dto.questionDTO;
+import com.quiz.quiz.dto.resultDTO;
 import com.quiz.quiz.dto.SessionDTO;
-import com.quiz.quiz.dto.conclusion.RevealScoreDTO;
+import com.quiz.quiz.dto.conclusion.revealScoreDTO;
 import com.quiz.quiz.dto.request.CreateSessionRequest;
 import com.quiz.quiz.dto.request.PostAnswerRequest;
+import com.quiz.quiz.model.SessionStatus;
 
 public interface QuizService {
     SessionDTO postNewSession(CreateSessionRequest session);
     SessionDTO getSession(String sessionKey);
-    QuestionDTO getCurrentQuestion(String sessionKey);
+    questionDTO getCurrentQuestion(String sessionKey);
     void putNextQuestion(String sessionKey);
     String generateSessionKey();
-    ResultDTO postAnswer(String sessionKey, PostAnswerRequest answer);
-    RevealScoreDTO getScore(String sessionKey, String username);
+    resultDTO postAnswer(String sessionKey, PostAnswerRequest answer);
+    revealScoreDTO getScore(String sessionKey, String username);
+    SessionStatus getStatus(String sessionKey);
+
 }

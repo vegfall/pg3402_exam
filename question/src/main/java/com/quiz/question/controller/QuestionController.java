@@ -44,4 +44,9 @@ public class QuestionController {
                 ? new ResponseEntity<>(score, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+
+    @GetMapping("{sessionKey}/{currentQuestionKey}/check-more")
+    public ResponseEntity<Boolean> checkMoreQuestions(@PathVariable String sessionKey, @PathVariable Integer currentQuestionKey) {
+        return new ResponseEntity<>(questionService.checkMoreQuestions(sessionKey, currentQuestionKey), HttpStatus.OK);
+    }
 }

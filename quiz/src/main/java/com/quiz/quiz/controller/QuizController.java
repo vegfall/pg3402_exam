@@ -1,13 +1,12 @@
 package com.quiz.quiz.controller;
 
-import com.quiz.quiz.dto.QuestionDTO;
-import com.quiz.quiz.dto.ResultDTO;
+import com.quiz.quiz.dto.questionDTO;
+import com.quiz.quiz.dto.resultDTO;
 import com.quiz.quiz.dto.SessionDTO;
-import com.quiz.quiz.dto.conclusion.RevealAlternativeDTO;
-import com.quiz.quiz.dto.conclusion.RevealQuestionDTO;
-import com.quiz.quiz.dto.conclusion.RevealScoreDTO;
+import com.quiz.quiz.dto.conclusion.revealScoreDTO;
 import com.quiz.quiz.dto.request.CreateSessionRequest;
 import com.quiz.quiz.dto.request.PostAnswerRequest;
+import com.quiz.quiz.model.SessionStatus;
 import com.quiz.quiz.service.SingleplayerQuizService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -43,8 +42,8 @@ public class QuizController {
     }
 
     @GetMapping("session/{sessionKey}/current-question")
-    public ResponseEntity<QuestionDTO> getCurrentQuestion(@PathVariable String sessionKey) {
-        QuestionDTO question = quizService.getCurrentQuestion(sessionKey);
+    public ResponseEntity<questionDTO> getCurrentQuestion(@PathVariable String sessionKey) {
+        questionDTO question = quizService.getCurrentQuestion(sessionKey);
 
         return question != null
                 ? new ResponseEntity<>(question, HttpStatus.OK)
@@ -59,8 +58,8 @@ public class QuizController {
     }
 
     @PostMapping("session/{sessionKey}/post-answer")
-    public ResponseEntity<ResultDTO> postAnswer(@PathVariable String sessionKey, @RequestBody PostAnswerRequest answer) {
-        ResultDTO result = quizService.postAnswer(sessionKey, answer);
+    public ResponseEntity<resultDTO> postAnswer(@PathVariable String sessionKey, @RequestBody PostAnswerRequest answer) {
+        resultDTO result = quizService.postAnswer(sessionKey, answer);
 
         return result != null
                 ? new ResponseEntity<>(result, HttpStatus.OK)
@@ -68,11 +67,16 @@ public class QuizController {
     }
 
     @GetMapping("session/{sessionKey}/{username}/score")
-    public ResponseEntity<RevealScoreDTO> getScore(@PathVariable String sessionKey, @PathVariable String username) {
-        RevealScoreDTO score = quizService.getScore(sessionKey, username);
+    public ResponseEntity<revealScoreDTO> getScore(@PathVariable String sessionKey, @PathVariable String username) {
+        revealScoreDTO score = quizService.getScore(sessionKey, username);
 
         return score != null
                 ? new ResponseEntity<>(score, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("session/{sessionKey}/status")
+    public ResponseEntity<SessionStatus> getStatus(@PathVariable String sessionKey) {
+        return new ResponseEntity<>(quizService.getStatus(sessionKey), HttpStatus.OK);
     }
 }

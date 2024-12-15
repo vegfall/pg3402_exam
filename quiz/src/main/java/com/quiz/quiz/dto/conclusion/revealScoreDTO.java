@@ -7,7 +7,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @Getter
-public class RevealScoreDTO {
+public class revealScoreDTO {
     private final List<RevealQuestionDTO> questions;
     private final int score;
 }
