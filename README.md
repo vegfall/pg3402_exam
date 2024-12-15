@@ -9,11 +9,12 @@
 - [x] Add gateway to backend
 - [x] Add a way to create a new quiz session
 - [x] Add result service
-- [ ] Add asynchronous communication between result and question
-- [ ] Add way for storing and displaying result after a round
-- [ ] Store quiz session in a database
+- [x] Add asynchronous communication between result and question
+- [ ] Add way for storing and displaying result after a game
+- [ ] Store data in databases
 - [ ] Add AI service with asynchronous communication
 - [ ] Setup API call message to openai to get desired data
+- [ ] Setup docker
 - [ ] ...
 
 ## Important Implementations
@@ -21,7 +22,7 @@
 - [x] Frontend
 - [x] Gateway
 - [x] Synchronous communication
-- [ ] Asynchronous communication (RabbitMQ)
+- [x] Asynchronous communication (RabbitMQ)
 - [x] Healthcheck
   - [x] Actuator
   - [x] Consul
