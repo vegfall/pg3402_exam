@@ -6,8 +6,12 @@ import com.quiz.question.dto.ResultDTO;
 import com.quiz.question.dto.request.PostAnswerRequest;
 import com.quiz.question.model.Alternative;
 import com.quiz.question.repository.MockQuestionRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
+@Slf4j
 @Service
 public class SingleplayerQuestionService implements QuestionService {
     private final MockQuestionRepository questionRepository;
@@ -25,8 +29,23 @@ public class SingleplayerQuestionService implements QuestionService {
 
     @Override
     public ResultDTO postAnswer(String sessionKey, Integer questionKey, PostAnswerRequest answer) {
-        Alternative correctAlternative = questionRepository.getCorrectAlternative(sessionKey, questionKey);
+        List<Alternative> alternatives = questionRepository.getAlternatives(sessionKey, questionKey);
 
-        return new ResultDTO(correctAlternative.getAlternativeKey(), "It worked! :) --- " + correctAlternative.getAlternativeExplanation());
+        Alternative chosenAlternative = alternatives.get(answer.getAlternativeKey() - 1);
+        Alternative correctAlternative = null;
+
+        for (Alternative alternative : alternatives) {
+            if (alternative.isCorrect()) {
+                correctAlternative = alternative;
+                break;
+            }
+        }
+
+        if (correctAlternative == null) {
+            return null;
+        }
+
+        log.info("QuestionKey: {}, CorrectKey: {}, ChosenKey: {}, Size: {}", questionKey, correctAlternative.getAlternativeKey(), chosenAlternative.getAlternativeKey(), alternatives.size());
+        return new ResultDTO(correctAlternative.getAlternativeKey(), "It worked! :) --- " + chosenAlternative.getAlternativeExplanation());
     }
 }

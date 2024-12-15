@@ -61,15 +61,9 @@ public class MockQuestionRepository {
         return mockQuestionDatabase.get(sessionKey).get(questionKey);
     }
 
-    public Alternative getCorrectAlternative(String sessionKey, Integer questionKey) {
-        Question currentQuestion = mockQuestionDatabase.get(sessionKey).get(questionKey);
+    public List<Alternative> getAlternatives(String sessionKey, Integer questionKey) {
+        Question currentQuestion = getQuestion(sessionKey, questionKey);
 
-        for (Alternative alternative : currentQuestion.getAlternatives()) {
-            if (alternative.isCorrect()) {
-                return alternative;
-            }
-        }
-
-        return null;
+        return currentQuestion.getAlternatives();
     }
 }
