@@ -43,6 +43,10 @@
 - [ ] Make sure solution is stateless
 - [ ] Make sure the ports are not hardcoded for services
 
+## Other
+
+- [ ] Make all models and dto that can final?
+
 ## Ports
 
 - Frontend: 3000

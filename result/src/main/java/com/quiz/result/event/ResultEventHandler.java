@@ -1,29 +1,33 @@
 package com.quiz.result.event;
 
-import jakarta.annotation.PostConstruct;
-import lombok.extern.slf4j.Slf4j;
+import com.quiz.result.dto.ResultDTO;
+import com.quiz.result.dto.request.GetResultRequest;
+import com.quiz.result.service.SingleplayerResultService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-@Slf4j
 @Service
 public class ResultEventHandler {
-    @PostConstruct
-    public void init() {
-        log.info("ResultEventHandler is initialized and listening to RabbitMQ queues.");
+    private final SingleplayerResultService resultService;
+    private final RabbitTemplate rabbitTemplate;
+
+    public ResultEventHandler(SingleplayerResultService resultService, RabbitTemplate rabbitTemplate) {
+        this.resultService = resultService;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
-    @RabbitListener(queues = "${amqp.queue.validation.response}")
-    public void handleTestMessage(String message) {
-        try {
-            log.info("Processing message: {}", message);
+    @Value("${amqp.exchange.name}")
+    private String exchangeName;
 
-            Thread.sleep(5000);
+    @Value("${amqp.queue.result.response}")
+    private String resultResponseQueueName;
 
-            log.info("Finished processing message: {}", message);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            log.error("Message processing was interrupted", e);
-        }
+    @RabbitListener(queues = "${amqp.queue.result.request}")
+    public void handleValidationResponse(GetResultRequest request) {
+        ResultDTO result = resultService.postAnswer(request);
+
+        rabbitTemplate.convertAndSend(exchangeName, resultResponseQueueName, result);
     }
 }

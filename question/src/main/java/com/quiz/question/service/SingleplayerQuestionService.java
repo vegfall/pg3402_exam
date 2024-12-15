@@ -3,15 +3,14 @@ package com.quiz.question.service;
 import com.quiz.question.client.ResultClient;
 import com.quiz.question.dto.QuestionDTO;
 import com.quiz.question.dto.ResultDTO;
+import com.quiz.question.dto.request.GetResultRequest;
 import com.quiz.question.dto.request.PostAnswerRequest;
 import com.quiz.question.model.Alternative;
 import com.quiz.question.repository.MockQuestionRepository;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Slf4j
 @Service
 public class SingleplayerQuestionService implements QuestionService {
     private final MockQuestionRepository questionRepository;
@@ -29,23 +28,27 @@ public class SingleplayerQuestionService implements QuestionService {
 
     @Override
     public ResultDTO postAnswer(String sessionKey, Integer questionKey, PostAnswerRequest answer) {
+        GetResultRequest getResultRequest;
         List<Alternative> alternatives = questionRepository.getAlternatives(sessionKey, questionKey);
 
         Alternative chosenAlternative = alternatives.get(answer.getAlternativeKey() - 1);
-        Alternative correctAlternative = null;
+        int correctAlternativeKey = 0;
 
         for (Alternative alternative : alternatives) {
             if (alternative.isCorrect()) {
-                correctAlternative = alternative;
+                correctAlternativeKey = alternative.getAlternativeKey();
                 break;
             }
         }
 
-        if (correctAlternative == null) {
-            return null;
-        }
+        getResultRequest = new GetResultRequest(
+                sessionKey,
+                answer.getUsername(),
+                chosenAlternative.getAlternativeKey(),
+                correctAlternativeKey,
+                chosenAlternative.getAlternativeExplanation()
+        );
 
-        log.info("QuestionKey: {}, CorrectKey: {}, ChosenKey: {}, Size: {}", questionKey, correctAlternative.getAlternativeKey(), chosenAlternative.getAlternativeKey(), alternatives.size());
-        return new ResultDTO(correctAlternative.getAlternativeKey(), "It worked! :) --- " + chosenAlternative.getAlternativeExplanation());
+        return resultClient.sendGetResultRequest(getResultRequest);
     }
 }

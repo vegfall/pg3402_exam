@@ -1,4 +1,4 @@
-package com.quiz.question.dto.request;
+package com.quiz.result.dto.request;
 
 import lombok.Getter;
 
@@ -27,3 +27,4 @@ public class GetResultRequest implements Serializable {
         this.explanation = explanation;
     }
 }
+
