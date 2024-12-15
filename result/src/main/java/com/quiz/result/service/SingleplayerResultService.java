@@ -1,6 +1,7 @@
 package com.quiz.result.service;
 
 import com.quiz.result.dto.ResultDTO;
+import com.quiz.result.dto.ScoreDTO;
 import com.quiz.result.dto.request.GetResultRequest;
 import com.quiz.result.repository.MockResultRepository;
 import org.springframework.stereotype.Service;
@@ -25,5 +26,10 @@ public class SingleplayerResultService implements ResultService {
         );
 
         return new ResultDTO(request.getCorrectAlternativeKey(), request.getExplanation());
+    }
+
+    @Override
+    public ScoreDTO getScore(String sessionKey, String username) {
+        return resultRepository.getScore(sessionKey, username).getDTO();
     }
 }

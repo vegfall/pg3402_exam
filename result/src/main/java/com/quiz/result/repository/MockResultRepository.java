@@ -35,4 +35,8 @@ public class MockResultRepository {
             score.setScore(score.getScore() + 1);
         }
     }
+
+    public Score getScore(String sessionKey, String username) {
+        return mockResultDatabase.get(username).get(sessionKey);
+    }
 }

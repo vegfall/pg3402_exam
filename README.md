@@ -48,6 +48,7 @@
 
 - [ ] Make all models and dto that can final?
 - [ ] Should ResultDTO sent over RabbitMQ also be serializable?
+- [ ] Make a generated session key
 
 ## Ports
 

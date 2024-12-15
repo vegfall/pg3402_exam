@@ -6,6 +6,7 @@ package com.quiz.quiz.client;
 
 import com.quiz.quiz.dto.QuestionDTO;
 import com.quiz.quiz.dto.ResultDTO;
+import com.quiz.quiz.dto.conclusion.RevealScoreDTO;
 import com.quiz.quiz.dto.request.PostAnswerRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -16,14 +17,14 @@ public class QuestionClient {
 
     public QuestionClient(WebClient.Builder webClientBuilder) {
         this.webClient = webClientBuilder
-                .baseUrl("http://127.0.0.1:8081/question")
+                .baseUrl("http://127.0.0.1:8081/question/")
                 .build();
     }
 
     public QuestionDTO getQuestion(String sessionKey, Integer questionKey) {
         return webClient
                 .get()
-                .uri("/" + sessionKey + "/" + questionKey)
+                .uri(sessionKey + "/" + questionKey)
                 .retrieve()
                 .bodyToMono(QuestionDTO.class)
                 .block();
@@ -32,10 +33,19 @@ public class QuestionClient {
     public ResultDTO postAnswer(String sessionKey, Integer questionKey, PostAnswerRequest answer) {
         return webClient
                 .post()
-                .uri("/" + sessionKey + "/" + questionKey + "/post-answer")
+                .uri(sessionKey + "/" + questionKey + "/post-answer")
                 .bodyValue(answer)
                 .retrieve()
                 .bodyToMono(ResultDTO.class)
+                .block();
+    }
+
+    public RevealScoreDTO getScore(String sessionKey, String username) {
+        return webClient
+                .get()
+                .uri(sessionKey + "/" + username + "/score")
+                .retrieve()
+                .bodyToMono(RevealScoreDTO.class)
                 .block();
     }
 }

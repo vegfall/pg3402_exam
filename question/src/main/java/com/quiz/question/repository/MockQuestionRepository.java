@@ -6,16 +6,18 @@ import org.springframework.stereotype.Repository;
 
 import java.util.*;
 
+import static org.springframework.util.CollectionUtils.toArray;
+
 @Repository
 public class MockQuestionRepository {
-    Dictionary<String, Dictionary<Integer, Question>> mockQuestionDatabase;
-    Dictionary<Integer, Question> mockQuestionTable;
+    Map<String, Map<Integer, Question>> mockQuestionDatabase;
+    Map<Integer, Question> mockQuestionTable;
 
 
 
     public MockQuestionRepository() {
-        mockQuestionDatabase = new Hashtable<>();
-        mockQuestionTable = new Hashtable<>();
+        mockQuestionDatabase = new HashMap<>();
+        mockQuestionTable = new HashMap<>();
 
         createMockQuestionDatabase();
 
@@ -59,6 +61,10 @@ public class MockQuestionRepository {
 
     public Question getQuestion(String sessionKey, Integer questionKey) {
         return mockQuestionDatabase.get(sessionKey).get(questionKey);
+    }
+
+    public Question[] getAllQuestions(String sessionKey) {
+        return mockQuestionDatabase.get(sessionKey).values().toArray(new Question[0]);
     }
 
     public List<Alternative> getAlternatives(String sessionKey, Integer questionKey) {

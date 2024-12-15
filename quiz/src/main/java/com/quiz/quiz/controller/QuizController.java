@@ -3,13 +3,18 @@ package com.quiz.quiz.controller;
 import com.quiz.quiz.dto.QuestionDTO;
 import com.quiz.quiz.dto.ResultDTO;
 import com.quiz.quiz.dto.SessionDTO;
+import com.quiz.quiz.dto.conclusion.RevealAlternativeDTO;
+import com.quiz.quiz.dto.conclusion.RevealQuestionDTO;
+import com.quiz.quiz.dto.conclusion.RevealScoreDTO;
 import com.quiz.quiz.dto.request.CreateSessionRequest;
 import com.quiz.quiz.dto.request.PostAnswerRequest;
 import com.quiz.quiz.service.SingleplayerQuizService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/quiz")
 public class QuizController {
@@ -59,6 +64,15 @@ public class QuizController {
 
         return result != null
                 ? new ResponseEntity<>(result, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("session/{sessionKey}/{username}/score")
+    public ResponseEntity<RevealScoreDTO> getScore(@PathVariable String sessionKey, @PathVariable String username) {
+        RevealScoreDTO score = quizService.getScore(sessionKey, username);
+
+        return score != null
+                ? new ResponseEntity<>(score, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

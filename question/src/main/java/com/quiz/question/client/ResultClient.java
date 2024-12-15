@@ -1,57 +1,25 @@
 package com.quiz.question.client;
 
-import com.quiz.question.dto.ResultDTO;
-import com.quiz.question.dto.request.GetResultRequest;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Value;
+import com.quiz.question.dto.ScoreDTO;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-
-//https://www.baeldung.com/java-blocking-queue
-@Slf4j
 @Service
 public class ResultClient {
-    private final RabbitTemplate rabbitTemplate;
+    private final WebClient webClient;
 
-    public ResultClient(RabbitTemplate rabbitTemplate) {
-        this.rabbitTemplate = rabbitTemplate;
+    public ResultClient(WebClient.Builder webClientBuilder) {
+        this.webClient = webClientBuilder
+                .baseUrl("http://127.0.0.1:8082/result/")
+                .build();
     }
 
-    @Value("${amqp.exchange.name}")
-    private String exchangeName;
-
-    @Value("${amqp.queue.result.request}")
-    private String resultRequestQueueName;
-
-    private final BlockingQueue<ResultDTO> responseQueue = new LinkedBlockingQueue<>();
-
-    public ResultDTO sendGetResultRequest(GetResultRequest request) {
-        log.info("Sending GetResultRequest: {}", request);
-
-        rabbitTemplate.convertAndSend(exchangeName, resultRequestQueueName, request);
-
-        try {
-            ResultDTO response = responseQueue.take();
-            log.info("Received ResultDTO: {}", response);
-            return response;
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            log.error("Failed to retrieve ResultDTO from response queue", e);
-            return null;
-        }
-    }
-
-    @RabbitListener(queues = "${amqp.queue.result.response}")
-    public void handleResultResponse(ResultDTO result) {
-        log.info("Received ResultDTO from response queue: {}", result);
-        boolean offered = responseQueue.offer(result);
-
-        if (!offered) {
-            log.warn("Failed to add ResultDTO to the blocking queue. Queue might be full.");
-        }
+    public ScoreDTO getScore(String sessionKey, String username) {
+        return webClient
+                .get()
+                .uri(sessionKey + "/" + username + "/score")
+                .retrieve()
+                .bodyToMono(ScoreDTO.class)
+                .block();
     }
 }

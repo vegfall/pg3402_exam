@@ -1,8 +1,8 @@
 package com.quiz.question.controller;
 
-import com.quiz.question.client.ResultClient;
 import com.quiz.question.dto.QuestionDTO;
 import com.quiz.question.dto.ResultDTO;
+import com.quiz.question.dto.conclusion.RevealScoreDTO;
 import com.quiz.question.dto.request.PostAnswerRequest;
 import com.quiz.question.service.SingleplayerQuestionService;
 import org.springframework.http.HttpStatus;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 public class QuestionController {
     private final SingleplayerQuestionService questionService;
 
-    public QuestionController(SingleplayerQuestionService questionService, ResultClient resultClient) {
+    public QuestionController(SingleplayerQuestionService questionService) {
         this.questionService = questionService;
     }
 
@@ -34,5 +34,14 @@ public class QuestionController {
         return result != null
                 ? new ResponseEntity<>(result, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("{sessionKey}/{username}/score")
+    public ResponseEntity<RevealScoreDTO> getScore(@PathVariable String sessionKey, @PathVariable String username) {
+        RevealScoreDTO score = questionService.getScore(sessionKey, username);
+
+        return score != null
+                ? new ResponseEntity<>(score, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

@@ -1,4 +1,4 @@
-package com.quiz.result.dto;
+package com.quiz.question.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

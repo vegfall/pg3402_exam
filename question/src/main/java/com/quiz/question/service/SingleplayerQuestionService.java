@@ -1,23 +1,32 @@
 package com.quiz.question.service;
 
 import com.quiz.question.client.ResultClient;
+import com.quiz.question.client.ResultEventHandler;
 import com.quiz.question.dto.QuestionDTO;
 import com.quiz.question.dto.ResultDTO;
+import com.quiz.question.dto.ScoreDTO;
+import com.quiz.question.dto.conclusion.RevealAlternativeDTO;
+import com.quiz.question.dto.conclusion.RevealQuestionDTO;
+import com.quiz.question.dto.conclusion.RevealScoreDTO;
 import com.quiz.question.dto.request.GetResultRequest;
 import com.quiz.question.dto.request.PostAnswerRequest;
 import com.quiz.question.model.Alternative;
+import com.quiz.question.model.Question;
 import com.quiz.question.repository.MockQuestionRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class SingleplayerQuestionService implements QuestionService {
     private final MockQuestionRepository questionRepository;
+    private final ResultEventHandler resultEventHandler;
     private final ResultClient resultClient;
 
-    public SingleplayerQuestionService(MockQuestionRepository questionRepository, ResultClient resultClient) {
+    public SingleplayerQuestionService(MockQuestionRepository questionRepository, ResultEventHandler resultEventHandler, ResultClient resultClient) {
         this.questionRepository = questionRepository;
+        this.resultEventHandler = resultEventHandler;
         this.resultClient = resultClient;
     }
 
@@ -49,6 +58,35 @@ public class SingleplayerQuestionService implements QuestionService {
                 chosenAlternative.getAlternativeExplanation()
         );
 
-        return resultClient.sendGetResultRequest(getResultRequest);
+        return resultEventHandler.sendGetResultRequest(getResultRequest);
+    }
+
+    @Override
+    public RevealScoreDTO getScore(String sessionKey, String username) {
+        ScoreDTO score = resultClient.getScore(sessionKey, username);
+
+        Question[] questions = questionRepository.getAllQuestions(sessionKey);
+        List<RevealQuestionDTO> revealQuestions = new ArrayList<>();
+        List<RevealAlternativeDTO> revealAlternatives;
+
+        for (int i = 0; i < score.getChosenAlternatives().size(); i++) {
+            revealAlternatives = new ArrayList<>();
+
+            for (Alternative alternative : questions[i].getAlternatives()) {
+                revealAlternatives.add(new RevealAlternativeDTO(
+                        alternative.getAlternativeKey(),
+                        alternative.getAlternativeText(),
+                        alternative.isCorrect()
+                ));
+            }
+
+            revealQuestions.add(new RevealQuestionDTO(
+                    questions[i].getQuestionText(),
+                    revealAlternatives,
+                    score.getChosenAlternatives().get(i))
+            );
+        }
+
+        return new RevealScoreDTO(revealQuestions, score.getScore());
     }
 }

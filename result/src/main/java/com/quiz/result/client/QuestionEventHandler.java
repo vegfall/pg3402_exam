@@ -9,11 +9,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class QuestionClient {
+public class QuestionEventHandler {
     private final SingleplayerResultService resultService;
     private final RabbitTemplate rabbitTemplate;
 
-    public QuestionClient(SingleplayerResultService resultService, RabbitTemplate rabbitTemplate) {
+    public QuestionEventHandler(SingleplayerResultService resultService, RabbitTemplate rabbitTemplate) {
         this.resultService = resultService;
         this.rabbitTemplate = rabbitTemplate;
     }
