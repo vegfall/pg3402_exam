@@ -7,7 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class Result {
-    private int resultId;
+    private Long resultId;
     private final int correctAlternative;
     private final String explanation;
 

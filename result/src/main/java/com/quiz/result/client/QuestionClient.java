@@ -1,4 +1,4 @@
-package com.quiz.result.event;
+package com.quiz.result.client;
 
 import com.quiz.result.dto.ResultDTO;
 import com.quiz.result.dto.request.GetResultRequest;
@@ -9,11 +9,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ResultEventHandler {
+public class QuestionClient {
     private final SingleplayerResultService resultService;
     private final RabbitTemplate rabbitTemplate;
 
-    public ResultEventHandler(SingleplayerResultService resultService, RabbitTemplate rabbitTemplate) {
+    public QuestionClient(SingleplayerResultService resultService, RabbitTemplate rabbitTemplate) {
         this.resultService = resultService;
         this.rabbitTemplate = rabbitTemplate;
     }
