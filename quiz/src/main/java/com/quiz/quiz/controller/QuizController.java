@@ -1,7 +1,7 @@
 package com.quiz.quiz.controller;
 
-import com.quiz.quiz.dto.questionDTO;
-import com.quiz.quiz.dto.resultDTO;
+import com.quiz.quiz.dto.QuestionDTO;
+import com.quiz.quiz.dto.ResultDTO;
 import com.quiz.quiz.dto.SessionDTO;
 import com.quiz.quiz.dto.conclusion.revealScoreDTO;
 import com.quiz.quiz.dto.request.CreateSessionRequest;
@@ -42,8 +42,8 @@ public class QuizController {
     }
 
     @GetMapping("session/{sessionKey}/current-question")
-    public ResponseEntity<questionDTO> getCurrentQuestion(@PathVariable String sessionKey) {
-        questionDTO question = quizService.getCurrentQuestion(sessionKey);
+    public ResponseEntity<QuestionDTO> getCurrentQuestion(@PathVariable String sessionKey) {
+        QuestionDTO question = quizService.getCurrentQuestion(sessionKey);
 
         return question != null
                 ? new ResponseEntity<>(question, HttpStatus.OK)
@@ -58,8 +58,8 @@ public class QuizController {
     }
 
     @PostMapping("session/{sessionKey}/post-answer")
-    public ResponseEntity<resultDTO> postAnswer(@PathVariable String sessionKey, @RequestBody PostAnswerRequest answer) {
-        resultDTO result = quizService.postAnswer(sessionKey, answer);
+    public ResponseEntity<ResultDTO> postAnswer(@PathVariable String sessionKey, @RequestBody PostAnswerRequest answer) {
+        ResultDTO result = quizService.postAnswer(sessionKey, answer);
 
         return result != null
                 ? new ResponseEntity<>(result, HttpStatus.OK)

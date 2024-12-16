@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class resultDTO {
+public class ResultDTO {
     private final int correctAlternative;
     private final String explanation;
 }

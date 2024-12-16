@@ -1,8 +1,8 @@
 package com.quiz.quiz.service;
 
 import com.quiz.quiz.client.QuestionClient;
-import com.quiz.quiz.dto.questionDTO;
-import com.quiz.quiz.dto.resultDTO;
+import com.quiz.quiz.dto.QuestionDTO;
+import com.quiz.quiz.dto.ResultDTO;
 import com.quiz.quiz.dto.SessionDTO;
 import com.quiz.quiz.dto.conclusion.revealScoreDTO;
 import com.quiz.quiz.dto.request.CreateSessionRequest;
@@ -41,7 +41,7 @@ public class SingleplayerQuizService implements QuizService {
     }
 
     @Override
-    public questionDTO getCurrentQuestion(String sessionKey) {
+    public QuestionDTO getCurrentQuestion(String sessionKey) {
         int currentQuestionKey = quizRepository.getSession(sessionKey).getCurrentQuestionKey();
 
         return questionClient.getQuestion(sessionKey, currentQuestionKey);
@@ -59,7 +59,7 @@ public class SingleplayerQuizService implements QuizService {
     }
 
     @Override
-    public resultDTO postAnswer(String sessionKey, PostAnswerRequest answer) {
+    public ResultDTO postAnswer(String sessionKey, PostAnswerRequest answer) {
         int currentQuestionKey = quizRepository.getSession(sessionKey).getCurrentQuestionKey();
 
         return questionClient.postAnswer(sessionKey, currentQuestionKey, answer);

@@ -4,8 +4,8 @@ package com.quiz.quiz.client;
 //https://stackoverflow.com/questions/23674046/get-list-of-json-objects-with-spring-resttemplate
 //https://www.javacodegeeks.com/2018/03/doing-stuff-with-spring-webflux.html
 
-import com.quiz.quiz.dto.questionDTO;
-import com.quiz.quiz.dto.resultDTO;
+import com.quiz.quiz.dto.QuestionDTO;
+import com.quiz.quiz.dto.ResultDTO;
 import com.quiz.quiz.dto.conclusion.revealScoreDTO;
 import com.quiz.quiz.dto.request.PostAnswerRequest;
 import org.springframework.stereotype.Service;
@@ -21,22 +21,22 @@ public class QuestionClient {
                 .build();
     }
 
-    public questionDTO getQuestion(String sessionKey, Integer questionKey) {
+    public QuestionDTO getQuestion(String sessionKey, Integer questionKey) {
         return webClient
                 .get()
                 .uri(sessionKey + "/" + questionKey)
                 .retrieve()
-                .bodyToMono(questionDTO.class)
+                .bodyToMono(QuestionDTO.class)
                 .block();
     }
 
-    public resultDTO postAnswer(String sessionKey, Integer questionKey, PostAnswerRequest answer) {
+    public ResultDTO postAnswer(String sessionKey, Integer questionKey, PostAnswerRequest answer) {
         return webClient
                 .post()
                 .uri(sessionKey + "/" + questionKey + "/post-answer")
                 .bodyValue(answer)
                 .retrieve()
-                .bodyToMono(resultDTO.class)
+                .bodyToMono(ResultDTO.class)
                 .block();
     }
 
