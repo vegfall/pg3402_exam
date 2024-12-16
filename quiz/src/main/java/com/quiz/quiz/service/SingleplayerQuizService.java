@@ -12,8 +12,10 @@ import com.quiz.quiz.mapper.QuizMapper;
 import com.quiz.quiz.model.Session;
 import com.quiz.quiz.model.SessionStatus;
 import com.quiz.quiz.repository.SessionRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class SingleplayerQuizService implements QuizService {
     private final QuestionClient questionClient;
@@ -61,7 +63,9 @@ public class SingleplayerQuizService implements QuizService {
     public void putNextQuestion(String sessionKey) {
         SessionEntity sessionEntity = getSessionEntityByKey(sessionKey);
 
+        log.info("Before: {}", sessionEntity.getCurrentQuestionKey());
         sessionEntity.setCurrentQuestionKey(sessionEntity.getCurrentQuestionKey() + 1);
+        log.info("After: {}", sessionEntity.getCurrentQuestionKey());
 
         sessionRepository.save(sessionEntity);
     }
@@ -84,13 +88,28 @@ public class SingleplayerQuizService implements QuizService {
         SessionEntity sessionEntity = getSessionEntityByKey(sessionKey);
         SessionStatus status = sessionEntity.getStatus();
 
-        if (!questionClient.checkMoreQuestions(sessionKey, sessionEntity.getCurrentQuestionKey())) {
+        boolean moreQuestions = questionClient.checkMoreQuestions(sessionKey, sessionEntity.getCurrentQuestionKey());
+
+        log.info("Is there moreQuestions?: {}", moreQuestions);
+
+        if (!moreQuestions) {
             status = SessionStatus.COMPLETED;
             sessionEntity.setStatus(status);
             sessionRepository.save(sessionEntity);
         }
 
+        log.info("Status log: {}", status);
+
         return status;
+    }
+
+    @Override
+    public void startSession(String sessionKey) {
+        SessionEntity session = getSessionEntityByKey(sessionKey);
+
+        session.setStatus(SessionStatus.ONGOING);
+
+        sessionRepository.save(session);
     }
 
     private SessionEntity getSessionEntityByKey(String sessionKey) {
@@ -105,5 +124,6 @@ public class SingleplayerQuizService implements QuizService {
     //FIX
     private String generateSessionKey() {
         return "1234";
+        //return UUID.randomUUID().toString();;
     }
 }

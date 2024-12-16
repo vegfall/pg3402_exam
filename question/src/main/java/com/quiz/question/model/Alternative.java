@@ -12,8 +12,4 @@ public class Alternative {
     private String alternativeText;
     private boolean correct;
     private String alternativeExplanation;
-
-    public AlternativeDTO getDTO() {
-        return new AlternativeDTO(alternativeKey, alternativeText);
-    }
 }

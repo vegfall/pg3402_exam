@@ -16,4 +16,5 @@ public interface QuizService {
     ResultDTO postAnswer(String sessionKey, PostAnswerRequest answer);
     revealScoreDTO getScore(String sessionKey, String username);
     SessionStatus getStatus(String sessionKey);
+    void startSession(String sessionKey);
 }

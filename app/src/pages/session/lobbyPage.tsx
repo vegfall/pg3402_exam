@@ -18,7 +18,7 @@ export default function LobbyPage() {
     }
 
     quizApi
-      .get<Session>(`session/info/${sessionKey}`)
+      .get<Session>(`session/${sessionKey}/info`)
       .then((response) => {
         setSession(response.data);
       })

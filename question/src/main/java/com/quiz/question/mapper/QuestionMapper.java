@@ -48,7 +48,7 @@ public class QuestionMapper {
 
         for (Alternative alternative : model.getAlternatives()) {
             entity = toEntity(alternative);
-            entity.setQuestion(new QuestionEntity(model.getQuestionId(), 0, null, null));
+            entity.setQuestion(new QuestionEntity(model.getQuestionId(), 0, null, null, null));
             alternatives.add(entity);
         }
 
@@ -56,7 +56,8 @@ public class QuestionMapper {
                 model.getQuestionId(),
                 model.getQuestionKey(),
                 model.getQuestionText(),
-                alternatives
+                alternatives,
+                null
         );
     }
 

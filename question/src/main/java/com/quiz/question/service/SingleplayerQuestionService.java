@@ -10,35 +10,68 @@ import com.quiz.question.dto.conclusion.RevealQuestionDTO;
 import com.quiz.question.dto.conclusion.RevealScoreDTO;
 import com.quiz.question.dto.request.GetResultRequest;
 import com.quiz.question.dto.request.PostAnswerRequest;
+import com.quiz.question.entity.QuestionEntity;
+import com.quiz.question.entity.SessionEntity;
+import com.quiz.question.mapper.QuestionMapper;
 import com.quiz.question.model.Alternative;
 import com.quiz.question.model.Question;
-import com.quiz.question.repository.MockQuestionRepository;
+import com.quiz.question.repository.QuestionRepository;
+import com.quiz.question.repository.SessionRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 public class SingleplayerQuestionService implements QuestionService {
-    private final MockQuestionRepository questionRepository;
+    private final SessionRepository sessionRepository;
+    private final QuestionRepository questionRepository;
     private final ResultEventHandler resultEventHandler;
     private final ResultClient resultClient;
+    private final QuestionMapper questionMapper;
 
-    public SingleplayerQuestionService(MockQuestionRepository questionRepository, ResultEventHandler resultEventHandler, ResultClient resultClient) {
+    public SingleplayerQuestionService(SessionRepository sessionRepository, QuestionRepository questionRepository, ResultEventHandler resultEventHandler, ResultClient resultClient, QuestionMapper questionMapper) {
+        this.sessionRepository = sessionRepository;
         this.questionRepository = questionRepository;
         this.resultEventHandler = resultEventHandler;
         this.resultClient = resultClient;
+        this.questionMapper = questionMapper;
     }
+
+    private List<Question> getQuestionsBySessionKey(String sessionKey) {
+        List<Question> questions = new ArrayList<>();
+        SessionEntity session = sessionRepository.findBySessionKey(sessionKey)
+                .orElseThrow(() -> new RuntimeException("Session not found for sessionKey: " + sessionKey));
+
+        if (session.getQuestions().isEmpty()) {
+            throw new RuntimeException("No questions found for sessionKey: " + sessionKey);
+        }
+
+        for (QuestionEntity question : session.getQuestions()) {
+            questions.add(questionMapper.toModel(question));
+        }
+
+        return questions;
+    }
+
+    private Question getQuestionByQuestionKey(String sessionKey, int questionKey) {
+        QuestionEntity questionEntity = questionRepository.findBySession_SessionKeyAndQuestionKey(sessionKey, questionKey)
+                .orElseThrow(() -> new RuntimeException("Question not found for sessionKey: " + sessionKey + " and questionKey: " + questionKey));
+        return questionMapper.toModel(questionEntity);
+    }
+
 
     @Override
     public QuestionDTO getQuestion(String sessionKey, Integer questionKey) {
-        return questionRepository.getQuestion(sessionKey, questionKey).getDTO();
+        return questionMapper.toDTO(getQuestionByQuestionKey(sessionKey, questionKey));
     }
 
     @Override
     public ResultDTO postAnswer(String sessionKey, Integer questionKey, PostAnswerRequest answer) {
         GetResultRequest getResultRequest;
-        List<Alternative> alternatives = questionRepository.getAlternatives(sessionKey, questionKey);
+        List<Alternative> alternatives = getQuestionByQuestionKey(sessionKey, questionKey).getAlternatives();
 
         Alternative chosenAlternative = alternatives.get(answer.getAlternativeKey() - 1);
         int correctAlternativeKey = 0;
@@ -64,15 +97,15 @@ public class SingleplayerQuestionService implements QuestionService {
     @Override
     public RevealScoreDTO getScore(String sessionKey, String username) {
         ScoreDTO score = resultClient.getScore(sessionKey, username);
+        List<Question> questions = getQuestionsBySessionKey(sessionKey);
 
-        Question[] questions = questionRepository.getAllQuestions(sessionKey);
         List<RevealQuestionDTO> revealQuestions = new ArrayList<>();
         List<RevealAlternativeDTO> revealAlternatives;
 
         for (int i = 0; i < score.getChosenAlternatives().size(); i++) {
             revealAlternatives = new ArrayList<>();
 
-            for (Alternative alternative : questions[i].getAlternatives()) {
+            for (Alternative alternative : questions.get(i).getAlternatives()) {
                 revealAlternatives.add(new RevealAlternativeDTO(
                         alternative.getAlternativeKey(),
                         alternative.getAlternativeText(),
@@ -81,7 +114,7 @@ public class SingleplayerQuestionService implements QuestionService {
             }
 
             revealQuestions.add(new RevealQuestionDTO(
-                    questions[i].getQuestionText(),
+                    questions.get(i).getQuestionText(),
                     revealAlternatives,
                     score.getChosenAlternatives().get(i))
             );
@@ -92,11 +125,15 @@ public class SingleplayerQuestionService implements QuestionService {
 
     @Override
     public boolean checkMoreQuestions(String sessionKey, int currentQuestionKey) {
-        for (Question question : questionRepository.getAllQuestions(sessionKey)) {
-            if (question.getQuestionKey() > currentQuestionKey + 1) {
+        for (Question question : getQuestionsBySessionKey(sessionKey)) {
+            log.info("Question: {}, QuestionKey: {}, CurrentKey: {}", question.getQuestionText(), question.getQuestionKey(), currentQuestionKey);
+            if (question.getQuestionKey() > currentQuestionKey /*+ 1*/) {
                 return true;
             }
+            log.info("---");
         }
+
+        log.info("====================================");
 
         return false;
     }

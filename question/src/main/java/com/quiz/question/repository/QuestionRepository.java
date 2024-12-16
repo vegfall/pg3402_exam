@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface QuestionRepository extends JpaRepository<QuestionEntity, Long> {
-    Optional<QuestionEntity> findByQuestionKey(int questionKey);
+    Optional<QuestionEntity> findBySession_SessionKeyAndQuestionKey(String sessionKey, int questionKey);
 }
