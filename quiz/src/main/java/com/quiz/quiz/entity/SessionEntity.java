@@ -21,5 +21,8 @@ public class SessionEntity {
     private int numberOfAlternatives;
     private String username;
     private int currentQuestionKey;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
     private SessionStatus status;
 }
