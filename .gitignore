@@ -3,6 +3,7 @@
 /app/.env
 
 .idea/
+.env
 
 HELP.md
 target/
