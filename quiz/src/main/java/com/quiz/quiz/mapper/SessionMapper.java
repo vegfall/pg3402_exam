@@ -3,7 +3,9 @@ package com.quiz.quiz.mapper;
 import com.quiz.quiz.dto.SessionDTO;
 import com.quiz.quiz.entity.SessionEntity;
 import com.quiz.quiz.model.Session;
+import org.springframework.stereotype.Component;
 
+@Component
 public class SessionMapper {
     public SessionDTO toDTO(Session model) {
         return new SessionDTO(
