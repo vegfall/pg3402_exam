@@ -1,5 +1,6 @@
 package com.quiz.quiz.entity;
 
+import com.quiz.quiz.model.SessionStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,4 +21,5 @@ public class SessionEntity {
     private int numberOfAlternatives;
     private String username;
     private int currentQuestionKey;
+    private SessionStatus status;
 }

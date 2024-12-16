@@ -18,4 +18,5 @@ public class Session {
     //private final bool timed;
     //private final DateTime creationTime;
     private int currentQuestionKey;
+    private SessionStatus status;
 }

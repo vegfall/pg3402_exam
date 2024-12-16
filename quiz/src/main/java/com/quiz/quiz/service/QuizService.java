@@ -13,9 +13,7 @@ public interface QuizService {
     SessionDTO getSession(String sessionKey);
     QuestionDTO getCurrentQuestion(String sessionKey);
     void putNextQuestion(String sessionKey);
-    String generateSessionKey();
     ResultDTO postAnswer(String sessionKey, PostAnswerRequest answer);
     revealScoreDTO getScore(String sessionKey, String username);
     SessionStatus getStatus(String sessionKey);
-
 }
