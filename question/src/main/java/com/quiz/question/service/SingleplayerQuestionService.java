@@ -17,13 +17,11 @@ import com.quiz.question.model.Alternative;
 import com.quiz.question.model.Question;
 import com.quiz.question.repository.QuestionRepository;
 import com.quiz.question.repository.SessionRepository;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Slf4j
 @Service
 public class SingleplayerQuestionService implements QuestionService {
     private final SessionRepository sessionRepository;
@@ -126,14 +124,10 @@ public class SingleplayerQuestionService implements QuestionService {
     @Override
     public boolean checkMoreQuestions(String sessionKey, int currentQuestionKey) {
         for (Question question : getQuestionsBySessionKey(sessionKey)) {
-            log.info("Question: {}, QuestionKey: {}, CurrentKey: {}", question.getQuestionText(), question.getQuestionKey(), currentQuestionKey);
             if (question.getQuestionKey() > currentQuestionKey /*+ 1*/) {
                 return true;
             }
-            log.info("---");
         }
-
-        log.info("====================================");
 
         return false;
     }
