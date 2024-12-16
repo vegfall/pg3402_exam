@@ -39,6 +39,7 @@ public class SingleplayerQuizService implements QuizService {
         sessionEntity.setNumberOfAlternatives(sessionRequest.getNumberOfAlternatives());
         sessionEntity.setUsername(sessionRequest.getUsername());
         sessionEntity.setCurrentQuestionKey(0);
+        sessionEntity.setStatus(SessionStatus.ONGOING);
 
         savedSessionEntity = sessionRepository.save(sessionEntity);
 
@@ -82,11 +83,13 @@ public class SingleplayerQuizService implements QuizService {
 
     @Override
     public SessionStatus getStatus(String sessionKey) {
-        SessionStatus status = SessionStatus.ONGOING;
-        Session session = quizRepository.getSession(sessionKey);
+        SessionEntity sessionEntity = getSessionEntityByKey(sessionKey);
+        SessionStatus status = sessionEntity.getStatus();
 
-        if (!questionClient.checkMoreQuestions(sessionKey, session.getCurrentQuestionKey())) {
+        if (!questionClient.checkMoreQuestions(sessionKey, sessionEntity.getCurrentQuestionKey())) {
             status = SessionStatus.COMPLETED;
+            sessionEntity.setStatus(status);
+            sessionRepository.save(sessionEntity);
         }
 
         return status;
