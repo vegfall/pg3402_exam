@@ -11,6 +11,7 @@ import java.util.List;
 @Getter
 public class Score {
     private Long scoreId;
+    private final String sessionKey;
     private final List<Integer> chosenAlternatives;
 
     @Setter
