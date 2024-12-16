@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { quizApi } from "../config/axiosApi";
 import { Session } from "../../types/session";
@@ -9,17 +9,27 @@ import Cookie from "js-cookie";
 export default function CreatePage() {
   const [theme, setTheme] = useState<string>("");
   const [numberOfAlternatives, setNumberOfAlternatives] = useState<number>(4);
-  const [username, setUsername] = useState<string>("");
   const navigate = useNavigate();
 
   const createSession = () => {
+    const username = Cookie.get("username");
+
+    if (!username) {
+      alert("Missing username. Returning to start...");
+      navigate("/");
+      return;
+    }
+
+    if (!theme) {
+      alert("Please provide a theme...");
+      return;
+    }
+
     const request: CreateSessionRequest = {
       theme,
       numberOfAlternatives,
       username,
     };
-
-    Cookie.set("username", username);
 
     quizApi
       .post("session/create", request)
@@ -37,38 +47,26 @@ export default function CreatePage() {
 
   return (
     <div>
-      <h1>Welcome! Please choose settings for quiz...</h1>
-      <div>
-        <label>
-          Theme: (Recommended to use github username for consistency)
-          <br />
-          <input
-            type={"text"}
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder={"Username"}
-          />
-        </label>
-      </div>
+      <h1>Welcome! Please choose settings for your quiz...</h1>
       <div>
         <label>
           Theme:
           <input
-            type={"text"}
+            type="text"
             value={theme}
             onChange={(e) => setTheme(e.target.value)}
-            placeholder={"Quiz Theme"}
+            placeholder="Quiz Theme"
           />
         </label>
       </div>
       <div>
         <label>
-          Number of alternatives:
+          Number of Alternatives:
           <input
             type="number"
             value={numberOfAlternatives}
             onChange={(e) => setNumberOfAlternatives(parseInt(e.target.value))}
-            placeholder={"4"}
+            placeholder="4"
             min={2}
             max={6}
           />
