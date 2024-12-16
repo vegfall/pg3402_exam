@@ -2,13 +2,13 @@ package com.quiz.result.service;
 
 import com.quiz.result.dto.ResultDTO;
 import com.quiz.result.dto.ScoreDTO;
+import com.quiz.result.dto.SessionScoreDTO;
 import com.quiz.result.dto.request.GetResultRequest;
 import com.quiz.result.entity.ScoreEntity;
 import com.quiz.result.entity.UserEntity;
 import com.quiz.result.mapper.ResultMapper;
 import com.quiz.result.repository.ScoreRepository;
 import com.quiz.result.repository.UserRepository;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -74,14 +74,14 @@ public class SingleplayerResultService implements ResultService {
     }
 
     @Override
-    public List<ScoreDTO> getScoresForSession(String sessionKey) {
+    public List<SessionScoreDTO> getScoresForSession(String sessionKey) {
         List<ScoreEntity> scoreEntities = scoreRepository.findBySessionKey(sessionKey);
-        List<ScoreDTO> scoreDTOs = new ArrayList<>();
+        List<SessionScoreDTO> sessionScoreDTOs = new ArrayList<>();
 
         for (ScoreEntity score : scoreEntities) {
-            scoreDTOs.add(resultMapper.toDTO(resultMapper.toModel(score)));
+            sessionScoreDTOs.add(resultMapper.toSessionScoreDTO(score));
         }
 
-        return scoreDTOs;
+        return sessionScoreDTOs;
     }
 }

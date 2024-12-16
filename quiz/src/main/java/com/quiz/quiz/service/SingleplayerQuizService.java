@@ -4,6 +4,7 @@ import com.quiz.quiz.client.QuestionClient;
 import com.quiz.quiz.dto.QuestionDTO;
 import com.quiz.quiz.dto.ResultDTO;
 import com.quiz.quiz.dto.SessionDTO;
+import com.quiz.quiz.dto.SessionScoreDTO;
 import com.quiz.quiz.dto.conclusion.revealScoreDTO;
 import com.quiz.quiz.dto.request.CreateSessionRequest;
 import com.quiz.quiz.dto.request.LoadSessionRequest;
@@ -14,6 +15,8 @@ import com.quiz.quiz.model.Session;
 import com.quiz.quiz.model.SessionStatus;
 import com.quiz.quiz.repository.SessionRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class SingleplayerQuizService implements QuizService {
@@ -80,6 +83,11 @@ public class SingleplayerQuizService implements QuizService {
         setStatus(sessionKey, SessionStatus.COMPLETED);
 
         return questionClient.getScore(sessionKey, username);
+    }
+
+    @Override
+    public List<SessionScoreDTO> getScores(String sessionKey) {
+        return questionClient.getScores(sessionKey);
     }
 
     @Override

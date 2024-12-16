@@ -6,10 +6,14 @@ package com.quiz.quiz.client;
 
 import com.quiz.quiz.dto.QuestionDTO;
 import com.quiz.quiz.dto.ResultDTO;
+import com.quiz.quiz.dto.SessionScoreDTO;
 import com.quiz.quiz.dto.conclusion.revealScoreDTO;
 import com.quiz.quiz.dto.request.PostAnswerRequest;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import java.util.List;
 
 @Service
 public class QuestionClient {
@@ -56,5 +60,14 @@ public class QuestionClient {
                 .retrieve()
                 .bodyToMono(boolean.class)
                 .block());
+    }
+
+    public List<SessionScoreDTO> getScores(String sessionKey) {
+        return webClient
+                .get()
+                .uri(sessionKey + "/scores")
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<List<SessionScoreDTO>>() {})
+                .block();
     }
 }

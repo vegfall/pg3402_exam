@@ -1,6 +1,7 @@
 package com.quiz.result.controller;
 
 import com.quiz.result.dto.ScoreDTO;
+import com.quiz.result.dto.SessionScoreDTO;
 import com.quiz.result.service.SingleplayerResultService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,9 +30,9 @@ public class ResultController {
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("{session}/scores")
-    public ResponseEntity<List<ScoreDTO>> getSessionScores(@PathVariable String sessionKey) {
-        List<ScoreDTO> scores = resultService.getScoresForSession(sessionKey);
+    @GetMapping("{sessionKey}/scores")
+    public ResponseEntity<List<SessionScoreDTO>> getSessionScores(@PathVariable String sessionKey) {
+        List<SessionScoreDTO> scores = resultService.getScoresForSession(sessionKey);
 
         return scores.isEmpty()
                 ? new ResponseEntity<>(HttpStatus.NO_CONTENT)

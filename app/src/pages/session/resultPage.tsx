@@ -5,9 +5,11 @@ import Cookies from "js-cookie";
 import { quizApi } from "../config/axiosApi";
 import { RevealQuestion } from "../../types/conclusion/revealQuestion";
 import { RevealAlternative } from "../../types/conclusion/revealAlternative";
+import { SessionScore } from "../../types/sessionScore";
 
 export default function ResultPage() {
   const [score, setScore] = useState<RevealScore | null>(null);
+  const [leaderboard, setLeaderboard] = useState<SessionScore[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,6 +23,7 @@ export default function ResultPage() {
     }
 
     fetchScore(sessionKey, username);
+    fetchLeaderboard(sessionKey);
   }, [navigate]);
 
   const fetchScore = (sessionKey: string, username: string) => {
@@ -33,6 +36,17 @@ export default function ResultPage() {
         console.error("Failed to fetch score:", error);
         alert("Filed to get score. Returning to start...");
         navigate("/");
+      });
+  };
+
+  const fetchLeaderboard = (sessionKey: string) => {
+    quizApi
+      .get<SessionScore[]>(`session/${sessionKey}/scores`)
+      .then((response) => {
+        setLeaderboard(response.data);
+      })
+      .catch((error) => {
+        console.error("Failed for fetch leaderboard:", error);
       });
   };
 
@@ -88,6 +102,33 @@ export default function ResultPage() {
       ) : (
         <p>Loading results...</p>
       )}
+
+      {/* Leaderboard Section */}
+      <div style={{ marginTop: "30px" }}>
+        <h2>Leaderboard</h2>
+        {leaderboard.length > 0 ? (
+          <ul>
+            {leaderboard.map((entry, index) => {
+              const isCurrentUser = entry.username === Cookies.get("username");
+              return (
+                <li
+                  key={index}
+                  style={
+                    isCurrentUser
+                      ? { fontWeight: "bold", color: "blue" }
+                      : { fontWeight: "normal" }
+                  }
+                >
+                  {entry.username}: {entry.totalScore} points
+                  {isCurrentUser && " (You)"}
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          <p>No leaderboard data available yet.</p>
+        )}
+      </div>
     </div>
   );
 }

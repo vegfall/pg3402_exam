@@ -5,6 +5,7 @@ import com.quiz.question.client.ResultEventHandler;
 import com.quiz.question.dto.QuestionDTO;
 import com.quiz.question.dto.ResultDTO;
 import com.quiz.question.dto.ScoreDTO;
+import com.quiz.question.dto.SessionScoreDTO;
 import com.quiz.question.dto.conclusion.RevealAlternativeDTO;
 import com.quiz.question.dto.conclusion.RevealQuestionDTO;
 import com.quiz.question.dto.conclusion.RevealScoreDTO;
@@ -119,6 +120,11 @@ public class SingleplayerQuestionService implements QuestionService {
         }
 
         return new RevealScoreDTO(revealQuestions, score.getScore());
+    }
+
+    @Override
+    public List<SessionScoreDTO> getScores(String sessionKey) {
+        return resultClient.getScores(sessionKey);
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.quiz.quiz.controller;
 import com.quiz.quiz.dto.QuestionDTO;
 import com.quiz.quiz.dto.ResultDTO;
 import com.quiz.quiz.dto.SessionDTO;
+import com.quiz.quiz.dto.SessionScoreDTO;
 import com.quiz.quiz.dto.conclusion.revealScoreDTO;
 import com.quiz.quiz.dto.request.CreateSessionRequest;
 import com.quiz.quiz.dto.request.LoadSessionRequest;
@@ -13,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -96,5 +99,14 @@ public class QuizController {
     @GetMapping("session/{sessionKey}/status")
     public ResponseEntity<SessionStatus> getStatus(@PathVariable String sessionKey) {
         return new ResponseEntity<>(quizService.getStatus(sessionKey), HttpStatus.OK);
+    }
+
+    @GetMapping("session/{sessionKey}/scores")
+    public ResponseEntity<List<SessionScoreDTO>> getScores(@PathVariable String sessionKey) {
+        List<SessionScoreDTO> sessionScores = quizService.getScores(sessionKey);
+
+        return sessionScores.isEmpty()
+                ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+                : new ResponseEntity<>(sessionScores, HttpStatus.OK);
     }
 }

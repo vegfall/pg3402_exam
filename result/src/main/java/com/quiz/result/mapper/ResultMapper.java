@@ -1,8 +1,10 @@
 package com.quiz.result.mapper;
 
 import com.quiz.result.dto.ScoreDTO;
+import com.quiz.result.dto.SessionScoreDTO;
 import com.quiz.result.entity.ScoreEntity;
 import com.quiz.result.model.Score;
+import com.quiz.result.model.SessionScore;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -43,5 +45,9 @@ public class ResultMapper {
                 chosenAlternatives,
                 entity.getTotalScore()
         );
+    }
+
+    public SessionScoreDTO toSessionScoreDTO(ScoreEntity entity) {
+        return new SessionScoreDTO(entity.getUser().getUsername(), entity.getTotalScore());
     }
 }

@@ -2,12 +2,15 @@ package com.quiz.question.controller;
 
 import com.quiz.question.dto.QuestionDTO;
 import com.quiz.question.dto.ResultDTO;
+import com.quiz.question.dto.SessionScoreDTO;
 import com.quiz.question.dto.conclusion.RevealScoreDTO;
 import com.quiz.question.dto.request.PostAnswerRequest;
 import com.quiz.question.service.SingleplayerQuestionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/question")
@@ -48,5 +51,14 @@ public class QuestionController {
     @GetMapping("{sessionKey}/{currentQuestionKey}/check-more")
     public ResponseEntity<Boolean> checkMoreQuestions(@PathVariable String sessionKey, @PathVariable Integer currentQuestionKey) {
         return new ResponseEntity<>(questionService.checkMoreQuestions(sessionKey, currentQuestionKey), HttpStatus.OK);
+    }
+
+    @GetMapping("{sessionKey}/scores")
+    public ResponseEntity<List<SessionScoreDTO>> getScores(@PathVariable String sessionKey) {
+        List<SessionScoreDTO> sessionScores = questionService.getScores(sessionKey);
+
+        return sessionScores.isEmpty()
+                ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+                : new ResponseEntity<>(sessionScores, HttpStatus.OK);
     }
 }
