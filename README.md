@@ -11,7 +11,7 @@
 - [x] Add result service
 - [x] Add asynchronous communication between result and question
 - [x] Add way for storing and displaying result after a game
-- [ ] Store data in databases
+- [x] Store data in databases
 - [ ] Add AI service with asynchronous communication
 - [ ] Setup API call message to openai to get desired data
 - [ ] Setup docker
@@ -26,7 +26,7 @@
 - [x] Healthcheck
   - [x] Actuator
   - [x] Consul
-- [ ] Database (MySQL?)
+- [x] Database (MySQL?)
 - [ ] Docker
 - [ ] Testing?
 - [ ] Exception Handling
@@ -41,7 +41,7 @@
 
 ## Important
 
-- [ ] Make sure solution is stateless
+- [x] Make sure solution is stateless
 - [ ] Make sure the ports are not hardcoded for services
 
 ## Other
