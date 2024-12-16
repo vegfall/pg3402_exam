@@ -1,6 +1,5 @@
 package com.quiz.quiz.model;
 
-import com.quiz.quiz.dto.SessionDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +18,4 @@ public class Session {
     //private final bool timed;
     //private final DateTime creationTime;
     private int currentQuestionKey;
-
-    public SessionDTO getDTO() {
-        return new SessionDTO(sessionKey, theme, numberOfAlternatives, username);
-    }
 }
