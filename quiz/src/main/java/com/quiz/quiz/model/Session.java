@@ -12,13 +12,13 @@ import lombok.Setter;
 @Setter
 public class Session {
     private Long sessionId;
+    private SessionStatus status;
     private final String sessionKey;
     private final String theme;
     private final int numberOfAlternatives;
     private final String username;
-    //private final bool timed;
-    //private final DateTime creationTime;
     private int currentQuestionKey;
+    //CreatedAt
 
     public SessionDTO getDTO() {
         return new SessionDTO(sessionKey, theme, numberOfAlternatives, username);
