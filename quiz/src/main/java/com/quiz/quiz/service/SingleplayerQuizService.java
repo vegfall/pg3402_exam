@@ -8,24 +8,22 @@ import com.quiz.quiz.dto.conclusion.revealScoreDTO;
 import com.quiz.quiz.dto.request.CreateSessionRequest;
 import com.quiz.quiz.dto.request.PostAnswerRequest;
 import com.quiz.quiz.entity.SessionEntity;
-import com.quiz.quiz.mapper.SessionMapper;
+import com.quiz.quiz.mapper.QuizMapper;
 import com.quiz.quiz.model.Session;
 import com.quiz.quiz.model.SessionStatus;
-import com.quiz.quiz.repository.MockQuizRepository;
 import com.quiz.quiz.repository.SessionRepository;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
 public class SingleplayerQuizService implements QuizService {
     private final QuestionClient questionClient;
     private final SessionRepository sessionRepository;
-    private final SessionMapper sessionMapper;
+    private final QuizMapper quizMapper;
 
-    public SingleplayerQuizService(QuestionClient questionClient, SessionRepository sessionRepository, SessionMapper sessionMapper) {
+    public SingleplayerQuizService(QuestionClient questionClient, SessionRepository sessionRepository, QuizMapper quizMapper) {
         this.questionClient = questionClient;
         this.sessionRepository = sessionRepository;
-        this.sessionMapper = sessionMapper;
+        this.quizMapper = quizMapper;
     }
 
     @Override
@@ -43,12 +41,12 @@ public class SingleplayerQuizService implements QuizService {
 
         savedSessionEntity = sessionRepository.save(sessionEntity);
 
-        return sessionMapper.toDTO(sessionMapper.toModel(savedSessionEntity));
+        return quizMapper.toDTO(quizMapper.toModel(savedSessionEntity));
     }
 
     @Override
     public SessionDTO getSession(String sessionKey) {
-        return sessionMapper.toDTO(getSessionByKey(sessionKey));
+        return quizMapper.toDTO(getSessionByKey(sessionKey));
     }
 
     @Override
@@ -101,7 +99,7 @@ public class SingleplayerQuizService implements QuizService {
     }
 
     private Session getSessionByKey(String sessionKey) {
-        return sessionMapper.toModel(getSessionEntityByKey(sessionKey));
+        return quizMapper.toModel(getSessionEntityByKey(sessionKey));
     }
 
     //FIX
