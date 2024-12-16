@@ -8,6 +8,7 @@ import com.quiz.result.entity.UserEntity;
 import com.quiz.result.mapper.ResultMapper;
 import com.quiz.result.repository.ScoreRepository;
 import com.quiz.result.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -56,7 +57,6 @@ public class SingleplayerResultService implements ResultService {
         alternatives = (scoreEntity.getChosenAlternatives() != null ? scoreEntity.getChosenAlternatives() : "") + request.getSelectedAlternativeKey();
 
         scoreEntity.setChosenAlternatives(alternatives);
-
         scoreRepository.save(scoreEntity);
 
         return result;

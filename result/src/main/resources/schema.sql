@@ -8,7 +8,6 @@ CREATE TABLE IF NOT EXISTS scores (
     user_id BIGINT NOT NULL,
     session_key VARCHAR(255) NOT NULL,
     total_score INT NOT NULL,
-    questions_answered INT NOT NULL,
     chosen_alternatives VARCHAR(255),
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
