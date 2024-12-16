@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
+import { LoadSessionRequest } from "../../types/request/loadSessionRequest";
+import { quizApi } from "../config/axiosApi";
 
 export default function HomePage() {
   const [username, setUsername] = useState<string>("");
@@ -18,14 +20,27 @@ export default function HomePage() {
   };
 
   const handleExistingQuiz = () => {
+    const request: LoadSessionRequest = { username };
+
     if (!username || !sessionKey) {
       alert("Please provide a username and session key...");
       return;
     }
 
     Cookies.set("username", username);
-    Cookies.set("sessionKey", sessionKey);
-    navigate("/lobby");
+
+    quizApi
+      .put(`/session/${sessionKey}/load`, request)
+      .then((response) => {
+        const session = response.data;
+
+        Cookies.set("sessionKey", sessionKey);
+        navigate("/lobby", { state: session });
+      })
+      .catch((error) => {
+        console.error("Error loading existing session:", error);
+        alert("Failed to load session. Please double-check session key...");
+      });
   };
 
   return (

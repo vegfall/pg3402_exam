@@ -5,6 +5,7 @@ import com.quiz.quiz.dto.ResultDTO;
 import com.quiz.quiz.dto.SessionDTO;
 import com.quiz.quiz.dto.conclusion.revealScoreDTO;
 import com.quiz.quiz.dto.request.CreateSessionRequest;
+import com.quiz.quiz.dto.request.LoadSessionRequest;
 import com.quiz.quiz.dto.request.PostAnswerRequest;
 import com.quiz.quiz.model.SessionStatus;
 import com.quiz.quiz.service.SingleplayerQuizService;
@@ -30,6 +31,15 @@ public class QuizController {
         return session != null
                 ? new ResponseEntity<>(session, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PutMapping("session/{sessionKey}/load")
+    public ResponseEntity<SessionDTO> loadPreviousSession(@PathVariable String sessionKey, @RequestBody LoadSessionRequest request) {
+        SessionDTO session = quizService.loadPreviousSession(sessionKey, request);
+
+        return session != null
+                ? new ResponseEntity<>(session, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PutMapping("session/{sessionKey}/start")
@@ -59,6 +69,7 @@ public class QuizController {
 
     @PutMapping("session/{sessionKey}/next-question")
     public ResponseEntity<HttpStatus> putNextQuestion(@PathVariable String sessionKey) {
+        log.info("Getting a call from backend...");
         quizService.putNextQuestion(sessionKey);
 
         return new ResponseEntity<>(HttpStatus.OK);

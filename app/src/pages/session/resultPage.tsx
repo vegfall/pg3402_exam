@@ -47,6 +47,12 @@ export default function ResultPage() {
     return {};
   };
 
+  const navigateHome = () => {
+    Cookies.remove("sessionKey");
+    Cookies.remove("username");
+    navigate("/");
+  };
+
   return (
     <div>
       <h1>Quiz Results</h1>
@@ -77,6 +83,7 @@ export default function ResultPage() {
               </div>
             ))}
           </div>
+          <button onClick={navigateHome}>Home</button>
         </div>
       ) : (
         <p>Loading results...</p>

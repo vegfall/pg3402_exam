@@ -6,6 +6,7 @@ import com.quiz.quiz.dto.ResultDTO;
 import com.quiz.quiz.dto.SessionDTO;
 import com.quiz.quiz.dto.conclusion.revealScoreDTO;
 import com.quiz.quiz.dto.request.CreateSessionRequest;
+import com.quiz.quiz.dto.request.LoadSessionRequest;
 import com.quiz.quiz.dto.request.PostAnswerRequest;
 import com.quiz.quiz.entity.SessionEntity;
 import com.quiz.quiz.mapper.QuizMapper;
@@ -76,6 +77,8 @@ public class SingleplayerQuizService implements QuizService {
 
     @Override
     public revealScoreDTO getScore(String sessionKey, String username) {
+        setStatus(sessionKey, SessionStatus.COMPLETED);
+
         return questionClient.getScore(sessionKey, username);
     }
 
@@ -88,8 +91,7 @@ public class SingleplayerQuizService implements QuizService {
 
         if (!moreQuestions) {
             status = SessionStatus.COMPLETED;
-            sessionEntity.setStatus(status);
-            sessionRepository.save(sessionEntity);
+            setStatus(sessionKey, status);
         }
 
         return status;
@@ -97,11 +99,20 @@ public class SingleplayerQuizService implements QuizService {
 
     @Override
     public void startSession(String sessionKey) {
-        SessionEntity session = getSessionEntityByKey(sessionKey);
+        setStatus(sessionKey, SessionStatus.ONGOING);
+    }
 
-        session.setStatus(SessionStatus.ONGOING);
+    @Override
+    public SessionDTO loadPreviousSession(String sessionKey, LoadSessionRequest request) {
+        SessionEntity sessionEntity = getSessionEntityByKey(sessionKey);
 
-        sessionRepository.save(session);
+        sessionEntity.setUsername(request.getUsername());
+        sessionEntity.setCurrentQuestionKey(0);
+        sessionEntity.setStatus(SessionStatus.ONGOING);
+
+        sessionRepository.save(sessionEntity);
+
+        return quizMapper.toDTO(quizMapper.toModel(sessionEntity));
     }
 
     private SessionEntity getSessionEntityByKey(String sessionKey) {
@@ -117,5 +128,13 @@ public class SingleplayerQuizService implements QuizService {
     private String generateSessionKey() {
         return "1234";
         //return UUID.randomUUID().toString();;
+    }
+
+    private void setStatus(String sessionKey, SessionStatus status) {
+        SessionEntity session = getSessionEntityByKey(sessionKey);
+
+        session.setStatus(status);
+
+        sessionRepository.save(session);
     }
 }

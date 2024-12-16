@@ -5,6 +5,7 @@ import com.quiz.quiz.dto.ResultDTO;
 import com.quiz.quiz.dto.SessionDTO;
 import com.quiz.quiz.dto.conclusion.revealScoreDTO;
 import com.quiz.quiz.dto.request.CreateSessionRequest;
+import com.quiz.quiz.dto.request.LoadSessionRequest;
 import com.quiz.quiz.dto.request.PostAnswerRequest;
 import com.quiz.quiz.model.SessionStatus;
 
@@ -17,4 +18,5 @@ public interface QuizService {
     revealScoreDTO getScore(String sessionKey, String username);
     SessionStatus getStatus(String sessionKey);
     void startSession(String sessionKey);
+    SessionDTO loadPreviousSession(String sessionKey, LoadSessionRequest request);
 }

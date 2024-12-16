@@ -74,8 +74,6 @@ export default function PlayPage() {
 
     const sessionStatus = await checkSessionStatus(sessionKey);
 
-    console.log(sessionStatus);
-
     if (sessionStatus === SessionStatus.COMPLETED) {
       navigate("/result");
       return;
