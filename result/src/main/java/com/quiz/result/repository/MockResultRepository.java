@@ -32,7 +32,7 @@ public class MockResultRepository {
         score.getChosenAlternatives().add(chosenAlternativeKey);
 
         if (correct) {
-            score.setScore(score.getScore() + 1);
+            score.setTotalScore(score.getTotalScore() + 1);
         }
     }
 

@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/result")
 public class ResultController {
@@ -25,5 +27,14 @@ public class ResultController {
         return score != null
                 ? new ResponseEntity<>(score, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("{session}/scores")
+    public ResponseEntity<List<ScoreDTO>> getSessionScores(@PathVariable String sessionKey) {
+        List<ScoreDTO> scores = resultService.getScoresForSession(sessionKey);
+
+        return scores.isEmpty()
+                ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+                : new ResponseEntity<>(scores, HttpStatus.OK);
     }
 }

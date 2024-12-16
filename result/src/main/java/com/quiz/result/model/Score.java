@@ -1,6 +1,5 @@
 package com.quiz.result.model;
 
-import com.quiz.result.dto.ScoreDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,9 +14,5 @@ public class Score {
     private final List<Integer> chosenAlternatives;
 
     @Setter
-    private int score;
-
-    public ScoreDTO getDTO() {
-        return new ScoreDTO(chosenAlternatives, score);
-    }
+    private int totalScore;
 }
