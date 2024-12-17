@@ -27,9 +27,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @Service
+//https://www.baeldung.com/java-completablefuture-runasync-supplyasync
 public class SingleplayerQuestionService implements QuestionService {
     private final SessionRepository sessionRepository;
     private final QuestionRepository questionRepository;
@@ -88,6 +90,32 @@ public class SingleplayerQuestionService implements QuestionService {
         return previousQuestionTexts;
     }
 
+    private void asyncAIQuestionGeneration(String sessionKey, int currentQuestionKey, int difficultyLevel) {
+        SessionEntity session = sessionRepository.findBySessionKey(sessionKey)
+                .orElseThrow(() -> new RuntimeException("Session not found for sessionKey: " + sessionKey));
+
+        List<String> previousQuestionTexts = getPreviousQuestionTexts(sessionKey, currentQuestionKey);
+
+        CompletableFuture.runAsync(() -> {
+            try {
+                AIPromptBuilder promptBuilder = new AIPromptBuilder();
+                String prompt = promptBuilder.build(
+                        session.getTheme(),
+                        session.getNumberOfAlternatives(),
+                        difficultyLevel,
+                        previousQuestionTexts
+                );
+
+                log.info("Sending AI request asynchronously for sessionKey: {}", sessionKey);
+                aiEventHandler.sendAIRequest(prompt);
+
+            } catch (Exception e) {
+                log.error("Error running async to generate questions for sessionKey: {}", sessionKey, e);
+            }
+        });
+    }
+
+
     @Override
     public void saveAIQuestions(String aiResponse) {
         log.info("HERE IT IS:\n {}", aiResponse);
@@ -97,27 +125,13 @@ public class SingleplayerQuestionService implements QuestionService {
     public QuestionDTO getQuestion(String sessionKey, Integer questionKey) {
         QuestionDTO currentQuestion = questionMapper.toDTO(getQuestionByQuestionKey(sessionKey, questionKey));
         int difficultyLevel = Math.min(currentQuestion.getQuestionKey() / 5, 10);
-        AIPromptBuilder promptBuilder = new AIPromptBuilder();
-        SessionEntity session;
-        String prompt;
 
         if (checkMoreQuestions(sessionKey, (questionKey + 1))) {
-           return currentQuestion;
+            return currentQuestion;
         }
 
         log.info("No more questions for {}, retrieving from AI...", sessionKey);
-
-        session = sessionRepository.findBySessionKey(sessionKey)
-                .orElseThrow(() -> new RuntimeException("Session not found for sessionKey: " + sessionKey));
-
-        prompt = promptBuilder.build(
-                session.getTheme(),
-                session.getNumberOfAlternatives(),
-                difficultyLevel,
-                getPreviousQuestionTexts(sessionKey, currentQuestion.getQuestionKey())
-        );
-
-        aiEventHandler.sendAIRequest(prompt);
+        asyncAIQuestionGeneration(sessionKey, currentQuestion.getQuestionKey(), difficultyLevel);
 
         return currentQuestion;
     }

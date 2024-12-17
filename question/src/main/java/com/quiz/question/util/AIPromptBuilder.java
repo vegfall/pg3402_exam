@@ -13,8 +13,8 @@ public class AIPromptBuilder {
                 I need help to create questions for a quiz about "%s", and each question will have %d alternatives.
                 Each question will increase in difficulty, ranging from 1 - 10, where 1 is common knowledge while 10 is expert difficulty.
                 You are currently on difficulty level %d.
-                It is VERY IMPORTANT that the questions follow this JSON structure, although you still use the correct number of alternatives,
-                and the position of the correct alternative is random:
+                It is VERY IMPORTANT that the questions follow this JSON structure, although you need to have the correct number of alternatives.
+                You NEED to have the number of alternatives I mentioned above, as well as place the correct one in a random position.
                 ---
                 [
                     {
