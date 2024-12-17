@@ -8,6 +8,7 @@ import com.quiz.quiz.dto.QuestionDTO;
 import com.quiz.quiz.dto.ResultDTO;
 import com.quiz.quiz.dto.SessionScoreDTO;
 import com.quiz.quiz.dto.conclusion.revealScoreDTO;
+import com.quiz.quiz.dto.request.NewSessionRequest;
 import com.quiz.quiz.dto.request.PostAnswerRequest;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
@@ -68,6 +69,16 @@ public class QuestionClient {
                 .uri(sessionKey + "/scores")
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<List<SessionScoreDTO>>() {})
+                .block();
+    }
+
+    public Void postSession(NewSessionRequest request) {
+        return webClient
+                .post()
+                .uri("post-session")
+                .bodyValue(request)
+                .retrieve()
+                .bodyToMono(Void.class)
                 .block();
     }
 }

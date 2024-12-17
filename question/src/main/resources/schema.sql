@@ -1,6 +1,8 @@
 CREATE TABLE IF NOT EXISTS sessions (
     session_id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    session_key VARCHAR(255) NOT NULL UNIQUE
+    session_key VARCHAR(255) NOT NULL UNIQUE,
+    theme VARCHAR(255) NOT NULL,
+    number_of_alternatives INT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS questions (

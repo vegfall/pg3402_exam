@@ -36,6 +36,7 @@ public class AIEventHandler {
         AIChatResponse response = null;
 
         log.info("Sending AIChatRequest: {}", request);
+        log.info("HERE IS THE PROMPT:\n {}", prompt);
 
         rabbitTemplate.convertAndSend(exchangeName, aiRequestQueueName, request);
 

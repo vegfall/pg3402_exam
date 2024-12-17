@@ -18,6 +18,8 @@ public class SessionEntity {
     private Long sessionId;
 
     private String sessionKey;
+    private String theme;
+    private int numberOfAlternatives;
 
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<QuestionEntity> questions;

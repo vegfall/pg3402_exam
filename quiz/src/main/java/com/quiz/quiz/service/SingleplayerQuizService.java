@@ -6,19 +6,18 @@ import com.quiz.quiz.dto.ResultDTO;
 import com.quiz.quiz.dto.SessionDTO;
 import com.quiz.quiz.dto.SessionScoreDTO;
 import com.quiz.quiz.dto.conclusion.revealScoreDTO;
-import com.quiz.quiz.dto.request.AIChatRequest;
 import com.quiz.quiz.dto.request.CreateSessionRequest;
 import com.quiz.quiz.dto.request.LoadSessionRequest;
+import com.quiz.quiz.dto.request.NewSessionRequest;
 import com.quiz.quiz.dto.request.PostAnswerRequest;
 import com.quiz.quiz.entity.SessionEntity;
 import com.quiz.quiz.mapper.QuizMapper;
 import com.quiz.quiz.model.Session;
 import com.quiz.quiz.model.SessionStatus;
 import com.quiz.quiz.repository.SessionRepository;
-import com.quiz.quiz.util.AIPromptBuilder;
 import org.springframework.stereotype.Service;
+import java.security.SecureRandom;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -35,9 +34,10 @@ public class SingleplayerQuizService implements QuizService {
 
     @Override
     public SessionDTO postNewSession(CreateSessionRequest sessionRequest) {
-        String sessionKey = generateSessionKey();
+        String sessionKey = generateSessionKey(6);
         SessionEntity sessionEntity = new SessionEntity();
         SessionEntity savedSessionEntity;
+        NewSessionRequest newSessionRequest;
 
         sessionEntity.setSessionKey(sessionKey);
         sessionEntity.setTheme(sessionRequest.getTheme());
@@ -47,6 +47,14 @@ public class SingleplayerQuizService implements QuizService {
         sessionEntity.setStatus(SessionStatus.ONGOING);
 
         savedSessionEntity = sessionRepository.save(sessionEntity);
+
+        newSessionRequest = new NewSessionRequest(
+                savedSessionEntity.getSessionKey(),
+                savedSessionEntity.getTheme(),
+                savedSessionEntity.getNumberOfAlternatives()
+        );
+
+        questionClient.postSession(newSessionRequest);
 
         return quizMapper.toDTO(quizMapper.toModel(savedSessionEntity));
     }
@@ -126,33 +134,6 @@ public class SingleplayerQuizService implements QuizService {
         return quizMapper.toDTO(quizMapper.toModel(sessionEntity));
     }
 
-    /*
-    @Override
-    public AIChatRequest getAIQuestion(String sessionKey) {
-        //TEMPS
-        List<String> previousQuestions = new ArrayList<>();
-
-
-
-        Session session = getSessionByKey(sessionKey);
-        int difficultyLevel = (session.getCurrentQuestionKey() / 10);
-
-        if (difficultyLevel > 10) {
-            difficultyLevel = 10;
-        }
-
-        String prompt = promptBuilder.build(
-                session.getTheme(),
-                session.getNumberOfAlternatives(),
-                difficultyLevel,
-                previousQuestions
-        );
-
-        return new AIChatRequest(prompt);
-    }
-
-     */
-
     private SessionEntity getSessionEntityByKey(String sessionKey) {
         return sessionRepository.findBySessionKey(sessionKey)
                 .orElseThrow(() -> new RuntimeException("Session not found"));
@@ -162,10 +143,16 @@ public class SingleplayerQuizService implements QuizService {
         return quizMapper.toModel(getSessionEntityByKey(sessionKey));
     }
 
-    //FIX
-    private String generateSessionKey() {
-        return "1234";
-        //return UUID.randomUUID().toString();;
+    private String generateSessionKey(int length) {
+        String allowedCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        SecureRandom random = new SecureRandom();
+        StringBuilder sessionKey = new StringBuilder(10);
+
+        for (int i = 0; i < 6; i++) {
+            sessionKey.append(allowedCharacters.charAt(random.nextInt(allowedCharacters.length())));
+        }
+
+        return sessionKey.toString();
     }
 
     private void setStatus(String sessionKey, SessionStatus status) {

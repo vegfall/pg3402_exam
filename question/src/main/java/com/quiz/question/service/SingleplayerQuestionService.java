@@ -1,6 +1,7 @@
 package com.quiz.question.service;
 
 import com.quiz.question.client.ResultClient;
+import com.quiz.question.dto.request.NewSessionRequest;
 import com.quiz.question.event.AIEventHandler;
 import com.quiz.question.event.ResultEventHandler;
 import com.quiz.question.dto.QuestionDTO;
@@ -19,13 +20,13 @@ import com.quiz.question.model.Alternative;
 import com.quiz.question.model.Question;
 import com.quiz.question.repository.QuestionRepository;
 import com.quiz.question.repository.SessionRepository;
+import com.quiz.question.util.AIPromptBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -38,7 +39,13 @@ public class SingleplayerQuestionService implements QuestionService {
     private final AIEventHandler aiEventHandler;
 
     public SingleplayerQuestionService(
-            SessionRepository sessionRepository, QuestionRepository questionRepository, ResultEventHandler resultEventHandler, ResultClient resultClient, QuestionMapper questionMapper, @Lazy AIEventHandler aiEventHandler) {
+            SessionRepository sessionRepository,
+            QuestionRepository questionRepository,
+            ResultEventHandler resultEventHandler,
+            ResultClient resultClient,
+            QuestionMapper questionMapper,
+            @Lazy AIEventHandler aiEventHandler
+    ) {
         this.sessionRepository = sessionRepository;
         this.questionRepository = questionRepository;
         this.resultEventHandler = resultEventHandler;
@@ -69,23 +76,48 @@ public class SingleplayerQuestionService implements QuestionService {
         return questionMapper.toModel(questionEntity);
     }
 
+
+    private List<String> getPreviousQuestionTexts(String sessionKey, int currentQuestionKey) {
+        List<Question> previousQuestions = getQuestionsBySessionKey(sessionKey);
+        List<String> previousQuestionTexts = new ArrayList<>();
+
+        for (int i = 0; i < previousQuestions.size() && i < currentQuestionKey; i++) {
+            previousQuestionTexts.add(previousQuestions.get(i).getQuestionText());
+        }
+
+        return previousQuestionTexts;
+    }
+
+    @Override
     public void saveAIQuestions(String aiResponse) {
-        log.info("HERE IT IS: {}", aiResponse);
+        log.info("HERE IT IS:\n {}", aiResponse);
     }
 
     @Override
     public QuestionDTO getQuestion(String sessionKey, Integer questionKey) {
         QuestionDTO currentQuestion = questionMapper.toDTO(getQuestionByQuestionKey(sessionKey, questionKey));
-        boolean availableQuestions = checkMoreQuestions(sessionKey, questionKey, 1);
+        int difficultyLevel = Math.min(currentQuestion.getQuestionKey() / 5, 10);
+        AIPromptBuilder promptBuilder = new AIPromptBuilder();
+        SessionEntity session;
+        String prompt;
 
-        log.info("SessionKey: {}, QuestionKey: {}, CurrentQuestion: {}, AvailableOptions: {}", sessionKey, questionKey, currentQuestion.getQuestionText(), availableQuestions);
-
-        if (!availableQuestions) {
-            log.info("No more questions for {}, retrieving from AI...", sessionKey);
-
-            String prompt = "Generate 5 quiz questions with 4 alternatives each. Theme: history";
-            aiEventHandler.sendAIRequest(prompt);
+        if (checkMoreQuestions(sessionKey, (questionKey + 1))) {
+           return currentQuestion;
         }
+
+        log.info("No more questions for {}, retrieving from AI...", sessionKey);
+
+        session = sessionRepository.findBySessionKey(sessionKey)
+                .orElseThrow(() -> new RuntimeException("Session not found for sessionKey: " + sessionKey));
+
+        prompt = promptBuilder.build(
+                session.getTheme(),
+                session.getNumberOfAlternatives(),
+                difficultyLevel,
+                getPreviousQuestionTexts(sessionKey, currentQuestion.getQuestionKey())
+        );
+
+        aiEventHandler.sendAIRequest(prompt);
 
         return currentQuestion;
     }
@@ -155,7 +187,14 @@ public class SingleplayerQuestionService implements QuestionService {
         return currentQuestionKey < getQuestionsBySessionKey(sessionKey).size() - 1;
     }
 
-    private boolean checkMoreQuestions(String sessionKey, int currentQuestionKey, int buffer) {
-        return currentQuestionKey < getQuestionsBySessionKey(sessionKey).size() - 1 - buffer;
+    @Override
+    public void postSession(NewSessionRequest session) {
+        SessionEntity sessionEntity = new SessionEntity();
+
+        sessionEntity.setSessionKey(session.getSessionKey());
+        sessionEntity.setTheme(session.getTheme());
+        sessionEntity.setNumberOfAlternatives(session.getNumberOfAlternatives());
+
+        sessionRepository.save(sessionEntity);
     }
 }

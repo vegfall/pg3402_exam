@@ -4,6 +4,7 @@ import com.quiz.question.dto.QuestionDTO;
 import com.quiz.question.dto.ResultDTO;
 import com.quiz.question.dto.SessionScoreDTO;
 import com.quiz.question.dto.conclusion.RevealScoreDTO;
+import com.quiz.question.dto.request.NewSessionRequest;
 import com.quiz.question.dto.request.PostAnswerRequest;
 import com.quiz.question.dto.response.AIChatResponse;
 import com.quiz.question.event.AIEventHandler;
@@ -66,13 +67,11 @@ public class QuestionController {
                 : new ResponseEntity<>(sessionScores, HttpStatus.OK);
     }
 
-    @GetMapping("/test/ai")
-    public ResponseEntity<String> testAICommunication(@RequestParam String prompt) {
-        AIChatResponse response = aiEventHandler.sendAIRequest(prompt);
-        if (response != null) {
-            return ResponseEntity.ok("AI Response: " + response.getResponse());
-        } else {
-            return ResponseEntity.status(500).body("Failed to get AI response.");
-        }
+    @PostMapping("post-session")
+    public ResponseEntity<HttpStatus> postSession(@RequestBody NewSessionRequest request) {
+        questionService.postSession(request);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
+
 }

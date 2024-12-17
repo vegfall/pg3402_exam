@@ -1,5 +1,6 @@
 -- Insert session with session_key "1234"
-INSERT INTO sessions (session_key) VALUES ('1234');
+INSERT INTO sessions (session_key, theme, number_of_alternatives)
+VALUES ('1234', 'History', 4);
 
 -- Get the session_id for the newly inserted session
 SET @session_id = LAST_INSERT_ID();

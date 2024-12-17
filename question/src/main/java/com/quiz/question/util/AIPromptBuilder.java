@@ -1,4 +1,4 @@
-package com.quiz.quiz.util;
+package com.quiz.question.util;
 
 import java.util.ArrayList;
 import java.util.List;
