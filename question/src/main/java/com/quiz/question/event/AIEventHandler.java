@@ -24,9 +24,6 @@ public class AIEventHandler {
     @Value("${amqp.queue.ai.request}")
     private String aiRequestQueueName;
 
-    @Value("${amqp.queue.ai.response}")
-    private String aiResponseQueueName;
-
     public AIEventHandler(RabbitTemplate rabbitTemplate) {
         this.rabbitTemplate = rabbitTemplate;
     }

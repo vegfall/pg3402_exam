@@ -5,6 +5,8 @@ import com.quiz.question.dto.ResultDTO;
 import com.quiz.question.dto.SessionScoreDTO;
 import com.quiz.question.dto.conclusion.RevealScoreDTO;
 import com.quiz.question.dto.request.PostAnswerRequest;
+import com.quiz.question.dto.response.AIChatResponse;
+import com.quiz.question.event.AIEventHandler;
 import com.quiz.question.service.SingleplayerQuestionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +18,11 @@ import java.util.List;
 @RequestMapping("/question")
 public class QuestionController {
     private final SingleplayerQuestionService questionService;
+    private final AIEventHandler aiEventHandler;
 
-    public QuestionController(SingleplayerQuestionService questionService) {
+    public QuestionController(SingleplayerQuestionService questionService, AIEventHandler aiEventHandler) {
         this.questionService = questionService;
+        this.aiEventHandler = aiEventHandler;
     }
 
     @GetMapping("{sessionKey}/{questionKey}")
@@ -60,5 +64,15 @@ public class QuestionController {
         return sessionScores.isEmpty()
                 ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
                 : new ResponseEntity<>(sessionScores, HttpStatus.OK);
+    }
+
+    @GetMapping("/test/ai")
+    public ResponseEntity<String> testAICommunication(@RequestParam String prompt) {
+        AIChatResponse response = aiEventHandler.sendAIRequest(prompt);
+        if (response != null) {
+            return ResponseEntity.ok("AI Response: " + response.getResponse());
+        } else {
+            return ResponseEntity.status(500).body("Failed to get AI response.");
+        }
     }
 }
