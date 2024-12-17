@@ -41,7 +41,7 @@ public class AIController {
         );
 
         if (response.getBody() != null && !response.getBody().getChoices().isEmpty()) {
-            responseMessage = new AIChatResponse(prompt.getPrompt(), response.getBody().getChoices().getFirst().getMessage().getContent());
+            responseMessage = new AIChatResponse(prompt.getSessionKey(), prompt.getPrompt(), response.getBody().getChoices().getFirst().getMessage().getContent());
 
             return new ResponseEntity<>(responseMessage, HttpStatus.OK);
         } else {

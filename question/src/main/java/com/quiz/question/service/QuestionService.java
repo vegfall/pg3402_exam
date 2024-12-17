@@ -16,5 +16,5 @@ public interface QuestionService {
     List<SessionScoreDTO> getScores(String sessionKey);
     boolean checkMoreQuestions(String sessionKey, int currentQuestionKey);
     void postSession(NewSessionRequest session);
-    void saveAIQuestions(String aiResponse);
+    void saveAIQuestions(String sessionKey, String aiResponse);
 }

@@ -107,7 +107,7 @@ public class SingleplayerQuestionService implements QuestionService {
                 );
 
                 log.info("Sending AI request asynchronously for sessionKey: {}", sessionKey);
-                aiEventHandler.sendAIRequest(prompt);
+                aiEventHandler.sendAIRequest(sessionKey, prompt);
 
             } catch (Exception e) {
                 log.error("Error running async to generate questions for sessionKey: {}", sessionKey, e);
@@ -117,8 +117,8 @@ public class SingleplayerQuestionService implements QuestionService {
 
 
     @Override
-    public void saveAIQuestions(String aiResponse) {
-        log.info("HERE IT IS:\n {}", aiResponse);
+    public void saveAIQuestions(String sessionKey, String aiResponse) {
+
     }
 
     @Override

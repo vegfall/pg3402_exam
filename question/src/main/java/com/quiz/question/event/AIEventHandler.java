@@ -31,18 +31,14 @@ public class AIEventHandler {
         this.questionService = questionService;
     }
 
-    public AIChatResponse sendAIRequest(String prompt) {
-        AIChatRequest request = new AIChatRequest(prompt);
+    public AIChatResponse sendAIRequest(String sessionKey, String prompt) {
+        AIChatRequest request = new AIChatRequest(sessionKey, prompt);
         AIChatResponse response = null;
-
-        log.info("Sending AIChatRequest: {}", request);
-        log.info("HERE IS THE PROMPT:\n {}", prompt);
 
         rabbitTemplate.convertAndSend(exchangeName, aiRequestQueueName, request);
 
         try {
             response = aiResponseQueue.take();
-            log.info("Received AIChatResponse: {}", response);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             log.error("Failed to retrieve AIChatResponse from response queue", e);
@@ -56,12 +52,10 @@ public class AIEventHandler {
         log.info("Received AIChatResponse from AI response queue: {}", response);
         boolean offered = aiResponseQueue.offer(response);
 
-        questionService.saveAIQuestions(response.getResponse());
+        questionService.saveAIQuestions(response.getSessionKey(), response.getResponse());
 
         if (!offered) {
             log.warn("Failed to add AIChatResponse to the blocking queue. Queue might be full.");
         }
-
-
     }
 }

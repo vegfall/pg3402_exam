@@ -35,9 +35,9 @@ public class SingleplayerAIService implements AIService {
         );
 
         if (response.getBody() != null && !response.getBody().getChoices().isEmpty()) {
-            responseMessage = new AIChatResponse(prompt.getPrompt(), response.getBody().getChoices().getFirst().getMessage().getContent());
+            responseMessage = new AIChatResponse(prompt.getSessionKey(), prompt.getPrompt(), response.getBody().getChoices().getFirst().getMessage().getContent());
         } else {
-            responseMessage = new AIChatResponse(prompt.getPrompt(), "No response from OpenAI...");
+            responseMessage = new AIChatResponse(prompt.getSessionKey(), prompt.getPrompt(), "No response from OpenAI...");
         }
 
         return responseMessage;
