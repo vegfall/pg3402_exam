@@ -5,6 +5,7 @@ import com.quiz.quiz.dto.ResultDTO;
 import com.quiz.quiz.dto.SessionDTO;
 import com.quiz.quiz.dto.SessionScoreDTO;
 import com.quiz.quiz.dto.conclusion.revealScoreDTO;
+import com.quiz.quiz.dto.request.AIChatRequest;
 import com.quiz.quiz.dto.request.CreateSessionRequest;
 import com.quiz.quiz.dto.request.LoadSessionRequest;
 import com.quiz.quiz.dto.request.PostAnswerRequest;
@@ -23,4 +24,5 @@ public interface QuizService {
     SessionStatus getStatus(String sessionKey);
     void startSession(String sessionKey);
     SessionDTO loadPreviousSession(String sessionKey, LoadSessionRequest request);
+    AIChatRequest getAIQuestion(String sessionKey);
 }

@@ -6,6 +6,7 @@ import com.quiz.quiz.dto.ResultDTO;
 import com.quiz.quiz.dto.SessionDTO;
 import com.quiz.quiz.dto.SessionScoreDTO;
 import com.quiz.quiz.dto.conclusion.revealScoreDTO;
+import com.quiz.quiz.dto.request.AIChatRequest;
 import com.quiz.quiz.dto.request.CreateSessionRequest;
 import com.quiz.quiz.dto.request.LoadSessionRequest;
 import com.quiz.quiz.dto.request.PostAnswerRequest;
@@ -14,8 +15,10 @@ import com.quiz.quiz.mapper.QuizMapper;
 import com.quiz.quiz.model.Session;
 import com.quiz.quiz.model.SessionStatus;
 import com.quiz.quiz.repository.SessionRepository;
+import com.quiz.quiz.util.AIPromptBuilder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -23,11 +26,13 @@ public class SingleplayerQuizService implements QuizService {
     private final QuestionClient questionClient;
     private final SessionRepository sessionRepository;
     private final QuizMapper quizMapper;
+    private final AIPromptBuilder promptBuilder;
 
-    public SingleplayerQuizService(QuestionClient questionClient, SessionRepository sessionRepository, QuizMapper quizMapper) {
+    public SingleplayerQuizService(QuestionClient questionClient, SessionRepository sessionRepository, QuizMapper quizMapper, AIPromptBuilder promptBuilder) {
         this.questionClient = questionClient;
         this.sessionRepository = sessionRepository;
         this.quizMapper = quizMapper;
+        this.promptBuilder = promptBuilder;
     }
 
     @Override
@@ -121,6 +126,30 @@ public class SingleplayerQuizService implements QuizService {
         sessionRepository.save(sessionEntity);
 
         return quizMapper.toDTO(quizMapper.toModel(sessionEntity));
+    }
+
+    @Override
+    public AIChatRequest getAIQuestion(String sessionKey) {
+        //TEMPS
+        List<String> previousQuestions = new ArrayList<>();
+
+
+
+        Session session = getSessionByKey(sessionKey);
+        int difficultyLevel = (session.getCurrentQuestionKey() / 10);
+
+        if (difficultyLevel > 10) {
+            difficultyLevel = 10;
+        }
+
+        String prompt = promptBuilder.build(
+                session.getTheme(),
+                session.getNumberOfAlternatives(),
+                difficultyLevel,
+                previousQuestions
+        );
+
+        return new AIChatRequest(prompt);
     }
 
     private SessionEntity getSessionEntityByKey(String sessionKey) {

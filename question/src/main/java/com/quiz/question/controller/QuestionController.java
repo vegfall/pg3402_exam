@@ -8,7 +8,6 @@ import com.quiz.question.dto.request.PostAnswerRequest;
 import com.quiz.question.dto.response.AIChatResponse;
 import com.quiz.question.event.AIEventHandler;
 import com.quiz.question.service.SingleplayerQuestionService;
-import com.quiz.question.util.AIPromptBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -75,27 +74,5 @@ public class QuestionController {
         } else {
             return ResponseEntity.status(500).body("Failed to get AI response.");
         }
-    }
-
-    @GetMapping("/test")
-    public String test() {
-        List<String> previousQuestions = List.of(
-                "What is the capital of Germany?",
-                "What is the speed of light?",
-                "Who discovered gravity?"
-        );
-
-        AIPromptBuilder builder = new AIPromptBuilder(
-                "Science",
-                4,
-                5,
-                3,
-                previousQuestions
-        );
-
-        String prompt = builder.build();
-        System.out.println(prompt);
-
-        return prompt;
     }
 }

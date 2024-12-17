@@ -21,7 +21,4 @@ public class SessionEntity {
 
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<QuestionEntity> questions;
-
-    //CreatedBy ?
-    //CreatedAt ?
 }
