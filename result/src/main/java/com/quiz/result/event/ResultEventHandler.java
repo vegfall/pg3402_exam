@@ -1,4 +1,4 @@
-package com.quiz.result.client;
+package com.quiz.result.event;
 
 import com.quiz.result.dto.ResultDTO;
 import com.quiz.result.dto.request.GetResultRequest;
@@ -11,11 +11,11 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-public class QuestionEventHandler {
+public class ResultEventHandler {
     private final SingleplayerResultService resultService;
     private final RabbitTemplate rabbitTemplate;
 
-    public QuestionEventHandler(SingleplayerResultService resultService, RabbitTemplate rabbitTemplate) {
+    public ResultEventHandler(SingleplayerResultService resultService, RabbitTemplate rabbitTemplate) {
         this.resultService = resultService;
         this.rabbitTemplate = rabbitTemplate;
     }

@@ -1,4 +1,4 @@
-package com.quiz.question.client;
+package com.quiz.question.event;
 
 import com.quiz.question.dto.ResultDTO;
 import com.quiz.question.dto.request.GetResultRequest;
@@ -14,10 +14,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 //https://www.baeldung.com/java-blocking-queue
 @Slf4j
 @Service
-public class ResultEventHandler {
+public class QuestionEventHandler {
     private final RabbitTemplate rabbitTemplate;
 
-    public ResultEventHandler(RabbitTemplate rabbitTemplate) {
+    public QuestionEventHandler(RabbitTemplate rabbitTemplate) {
         this.rabbitTemplate = rabbitTemplate;
     }
 
