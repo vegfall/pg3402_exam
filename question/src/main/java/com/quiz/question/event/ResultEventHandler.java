@@ -14,12 +14,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 //https://www.baeldung.com/java-blocking-queue
 @Slf4j
 @Service
-public class QuestionEventHandler {
+public class ResultEventHandler {
     private final RabbitTemplate rabbitTemplate;
-
-    public QuestionEventHandler(RabbitTemplate rabbitTemplate) {
-        this.rabbitTemplate = rabbitTemplate;
-    }
+    private final BlockingQueue<ResultDTO> responseQueue = new LinkedBlockingQueue<>();
 
     @Value("${amqp.exchange.name}")
     private String exchangeName;
@@ -27,22 +24,25 @@ public class QuestionEventHandler {
     @Value("${amqp.queue.result.request}")
     private String resultRequestQueueName;
 
-    private final BlockingQueue<ResultDTO> responseQueue = new LinkedBlockingQueue<>();
+    public ResultEventHandler(RabbitTemplate rabbitTemplate) {
+        this.rabbitTemplate = rabbitTemplate;
+    }
 
     public ResultDTO sendGetResultRequest(GetResultRequest request) {
+        ResultDTO response = null;
         log.info("Sending GetResultRequest: {}", request);
 
         rabbitTemplate.convertAndSend(exchangeName, resultRequestQueueName, request);
 
         try {
-            ResultDTO response = responseQueue.take();
+            response = responseQueue.take();
             log.info("Received ResultDTO: {}", response);
-            return response;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             log.error("Failed to retrieve ResultDTO from response queue", e);
-            return null;
         }
+
+        return response;
     }
 
     @RabbitListener(queues = "${amqp.queue.result.response}")

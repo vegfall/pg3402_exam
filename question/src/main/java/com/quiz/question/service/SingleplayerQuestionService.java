@@ -1,7 +1,7 @@
 package com.quiz.question.service;
 
 import com.quiz.question.client.ResultClient;
-import com.quiz.question.event.QuestionEventHandler;
+import com.quiz.question.event.ResultEventHandler;
 import com.quiz.question.dto.QuestionDTO;
 import com.quiz.question.dto.ResultDTO;
 import com.quiz.question.dto.ScoreDTO;
@@ -27,14 +27,14 @@ import java.util.List;
 public class SingleplayerQuestionService implements QuestionService {
     private final SessionRepository sessionRepository;
     private final QuestionRepository questionRepository;
-    private final QuestionEventHandler questionEventHandler;
+    private final ResultEventHandler resultEventHandler;
     private final ResultClient resultClient;
     private final QuestionMapper questionMapper;
 
-    public SingleplayerQuestionService(SessionRepository sessionRepository, QuestionRepository questionRepository, QuestionEventHandler questionEventHandler, ResultClient resultClient, QuestionMapper questionMapper) {
+    public SingleplayerQuestionService(SessionRepository sessionRepository, QuestionRepository questionRepository, ResultEventHandler resultEventHandler, ResultClient resultClient, QuestionMapper questionMapper) {
         this.sessionRepository = sessionRepository;
         this.questionRepository = questionRepository;
-        this.questionEventHandler = questionEventHandler;
+        this.resultEventHandler = resultEventHandler;
         this.resultClient = resultClient;
         this.questionMapper = questionMapper;
     }
@@ -90,7 +90,7 @@ public class SingleplayerQuestionService implements QuestionService {
                 chosenAlternative.getAlternativeExplanation()
         );
 
-        return questionEventHandler.sendGetResultRequest(getResultRequest);
+        return resultEventHandler.sendGetResultRequest(getResultRequest);
     }
 
     @Override

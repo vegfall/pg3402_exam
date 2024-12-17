@@ -11,11 +11,11 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-public class ResultEventHandler {
+public class QuestionEventHandler {
     private final SingleplayerResultService resultService;
     private final RabbitTemplate rabbitTemplate;
 
-    public ResultEventHandler(SingleplayerResultService resultService, RabbitTemplate rabbitTemplate) {
+    public QuestionEventHandler(SingleplayerResultService resultService, RabbitTemplate rabbitTemplate) {
         this.resultService = resultService;
         this.rabbitTemplate = rabbitTemplate;
     }
