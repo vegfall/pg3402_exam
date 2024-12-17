@@ -1,4 +1,4 @@
-package com.quiz.AI;
+package com.quiz.ai;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

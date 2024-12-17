@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.quiz</groupId>
-	<artifactId>AI</artifactId>
+	<artifactId>ai</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>AI</name>
+	<name>ai</name>
 	<description>AI Service</description>
 	<url/>
 	<licenses>
