@@ -1,7 +1,10 @@
 package com.quiz.question.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.quiz.question.client.ResultClient;
 import com.quiz.question.dto.request.NewSessionRequest;
+import com.quiz.question.entity.AlternativeEntity;
 import com.quiz.question.event.AIEventHandler;
 import com.quiz.question.event.ResultEventHandler;
 import com.quiz.question.dto.QuestionDTO;
@@ -21,12 +24,15 @@ import com.quiz.question.model.Question;
 import com.quiz.question.repository.QuestionRepository;
 import com.quiz.question.repository.SessionRepository;
 import com.quiz.question.util.AIPromptBuilder;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 @Slf4j
@@ -38,6 +44,7 @@ public class SingleplayerQuestionService implements QuestionService {
     private final ResultEventHandler resultEventHandler;
     private final ResultClient resultClient;
     private final QuestionMapper questionMapper;
+    private final ObjectMapper objectMapper;
     private final AIEventHandler aiEventHandler;
 
     public SingleplayerQuestionService(
@@ -46,6 +53,7 @@ public class SingleplayerQuestionService implements QuestionService {
             ResultEventHandler resultEventHandler,
             ResultClient resultClient,
             QuestionMapper questionMapper,
+            ObjectMapper objectMapper,
             @Lazy AIEventHandler aiEventHandler
     ) {
         this.sessionRepository = sessionRepository;
@@ -53,17 +61,14 @@ public class SingleplayerQuestionService implements QuestionService {
         this.resultEventHandler = resultEventHandler;
         this.resultClient = resultClient;
         this.questionMapper = questionMapper;
+        this.objectMapper = objectMapper;
         this.aiEventHandler = aiEventHandler;
     }
 
     private List<Question> getQuestionsBySessionKey(String sessionKey) {
         List<Question> questions = new ArrayList<>();
-        SessionEntity session = sessionRepository.findBySessionKey(sessionKey)
+        SessionEntity session = sessionRepository.findBySessionKeyWithQuestionsAndAlternatives(sessionKey)
                 .orElseThrow(() -> new RuntimeException("Session not found for sessionKey: " + sessionKey));
-
-        if (session.getQuestions().isEmpty()) {
-            throw new RuntimeException("No questions found for sessionKey: " + sessionKey);
-        }
 
         for (QuestionEntity question : session.getQuestions()) {
             questions.add(questionMapper.toModel(question));
@@ -73,7 +78,7 @@ public class SingleplayerQuestionService implements QuestionService {
     }
 
     private Question getQuestionByQuestionKey(String sessionKey, int questionKey) {
-        QuestionEntity questionEntity = questionRepository.findBySession_SessionKeyAndQuestionKey(sessionKey, questionKey)
+        QuestionEntity questionEntity = questionRepository.findBySessionKeyAndQuestionKey(sessionKey, questionKey)
                 .orElseThrow(() -> new RuntimeException("Question not found for sessionKey: " + sessionKey + " and questionKey: " + questionKey));
         return questionMapper.toModel(questionEntity);
     }
@@ -94,8 +99,6 @@ public class SingleplayerQuestionService implements QuestionService {
         SessionEntity session = sessionRepository.findBySessionKey(sessionKey)
                 .orElseThrow(() -> new RuntimeException("Session not found for sessionKey: " + sessionKey));
 
-        List<String> previousQuestionTexts = getPreviousQuestionTexts(sessionKey, currentQuestionKey);
-
         CompletableFuture.runAsync(() -> {
             try {
                 AIPromptBuilder promptBuilder = new AIPromptBuilder();
@@ -103,7 +106,7 @@ public class SingleplayerQuestionService implements QuestionService {
                         session.getTheme(),
                         session.getNumberOfAlternatives(),
                         difficultyLevel,
-                        previousQuestionTexts
+                        getPreviousQuestionTexts(sessionKey, currentQuestionKey)
                 );
 
                 log.info("Sending AI request asynchronously for sessionKey: {}", sessionKey);
@@ -115,10 +118,54 @@ public class SingleplayerQuestionService implements QuestionService {
         });
     }
 
-
+    @Transactional
     @Override
-    public void saveAIQuestions(String sessionKey, String aiResponse) {
+    public synchronized void saveAIQuestions(String sessionKey, String aiResponse) {
+        try {
+            List<Question> questions = objectMapper.readValue(aiResponse, new TypeReference<List<Question>>() {});
 
+            SessionEntity session = sessionRepository.findBySessionKey(sessionKey)
+                    .orElseThrow(() -> new RuntimeException("Session not found for sessionKey: " + sessionKey));
+
+            int nextQuestionKey = questionRepository.findNextQuestionKeyBySessionId(session.getSessionId());
+
+            Set<QuestionEntity> newQuestions = new HashSet<>();
+
+            for (Question question : questions) {
+                QuestionEntity newQuestion = getQuestionEntity(question, session, nextQuestionKey);
+                newQuestions.add(newQuestion);
+                nextQuestionKey++;
+            }
+
+            questionRepository.saveAll(newQuestions);
+        } catch (Exception e) {
+            log.error("Error saving AI questions: {}", e.getMessage(), e);
+            throw new RuntimeException("Failed to save AI-generated questions", e);
+        }
+    }
+
+    private static QuestionEntity getQuestionEntity(Question question, SessionEntity session, int lastQuestionKey) {
+        QuestionEntity newQuestion = new QuestionEntity();
+        newQuestion.setSession(session);
+        newQuestion.setQuestionKey(lastQuestionKey);
+        newQuestion.setQuestionText(question.getQuestionText());
+
+        Set<AlternativeEntity> newAlternatives = new HashSet<>();
+        int alternativeKey = 1;
+
+        for (Alternative alternative : question.getAlternatives()) {
+            AlternativeEntity newAlternative = new AlternativeEntity();
+            newAlternative.setAlternativeKey(alternativeKey++);
+            newAlternative.setAlternativeText(alternative.getAlternativeText());
+            newAlternative.setCorrect(alternative.isCorrect());
+            newAlternative.setAlternativeExplanation(alternative.getAlternativeExplanation());
+            newAlternative.setQuestion(newQuestion);
+
+            newAlternatives.add(newAlternative);
+        }
+
+        newQuestion.setAlternatives(newAlternatives);
+        return newQuestion;
     }
 
     @Override
@@ -139,7 +186,7 @@ public class SingleplayerQuestionService implements QuestionService {
     @Override
     public ResultDTO postAnswer(String sessionKey, Integer questionKey, PostAnswerRequest answer) {
         GetResultRequest getResultRequest;
-        List<Alternative> alternatives = getQuestionByQuestionKey(sessionKey, questionKey).getAlternatives();
+        List<Alternative> alternatives = new ArrayList<>(getQuestionByQuestionKey(sessionKey, questionKey).getAlternatives());
 
         Alternative chosenAlternative = alternatives.get(answer.getAlternativeKey() - 1);
         int correctAlternativeKey = 0;

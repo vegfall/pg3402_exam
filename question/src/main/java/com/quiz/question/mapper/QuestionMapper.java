@@ -9,7 +9,9 @@ import com.quiz.question.model.Question;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class QuestionMapper {
@@ -28,7 +30,7 @@ public class QuestionMapper {
     }
 
     public Question toModel(QuestionEntity entity) {
-        List<Alternative> alternatives = new ArrayList<>();
+        Set<Alternative> alternatives = new HashSet<>();
 
         for (AlternativeEntity alternative : entity.getAlternatives()) {
             alternatives.add(toModel(alternative));
@@ -43,7 +45,7 @@ public class QuestionMapper {
     }
 
     public QuestionEntity toEntity(Question model) {
-        List<AlternativeEntity> alternatives = new ArrayList<>();
+        Set<AlternativeEntity> alternatives = new HashSet<>();
         AlternativeEntity entity;
 
         for (Alternative alternative : model.getAlternatives()) {

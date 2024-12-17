@@ -1,15 +1,14 @@
 package com.quiz.question.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "sessions")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class SessionEntity {
@@ -21,6 +20,11 @@ public class SessionEntity {
     private String theme;
     private int numberOfAlternatives;
 
+    @Version
+    private Long version;
+
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<QuestionEntity> questions;
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<QuestionEntity> questions;
 }
