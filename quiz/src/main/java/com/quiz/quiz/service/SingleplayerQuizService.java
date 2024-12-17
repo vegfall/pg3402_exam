@@ -26,13 +26,11 @@ public class SingleplayerQuizService implements QuizService {
     private final QuestionClient questionClient;
     private final SessionRepository sessionRepository;
     private final QuizMapper quizMapper;
-    private final AIPromptBuilder promptBuilder;
 
-    public SingleplayerQuizService(QuestionClient questionClient, SessionRepository sessionRepository, QuizMapper quizMapper, AIPromptBuilder promptBuilder) {
+    public SingleplayerQuizService(QuestionClient questionClient, SessionRepository sessionRepository, QuizMapper quizMapper) {
         this.questionClient = questionClient;
         this.sessionRepository = sessionRepository;
         this.quizMapper = quizMapper;
-        this.promptBuilder = promptBuilder;
     }
 
     @Override
@@ -128,6 +126,7 @@ public class SingleplayerQuizService implements QuizService {
         return quizMapper.toDTO(quizMapper.toModel(sessionEntity));
     }
 
+    /*
     @Override
     public AIChatRequest getAIQuestion(String sessionKey) {
         //TEMPS
@@ -151,6 +150,8 @@ public class SingleplayerQuizService implements QuizService {
 
         return new AIChatRequest(prompt);
     }
+
+     */
 
     private SessionEntity getSessionEntityByKey(String sessionKey) {
         return sessionRepository.findBySessionKey(sessionKey)

@@ -72,7 +72,6 @@ public class QuizController {
 
     @PutMapping("session/{sessionKey}/next-question")
     public ResponseEntity<HttpStatus> putNextQuestion(@PathVariable String sessionKey) {
-        log.info("Getting a call from backend...");
         quizService.putNextQuestion(sessionKey);
 
         return new ResponseEntity<>(HttpStatus.OK);

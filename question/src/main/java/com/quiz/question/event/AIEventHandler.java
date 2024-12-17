@@ -2,6 +2,7 @@ package com.quiz.question.event;
 
 import com.quiz.question.dto.request.AIChatRequest;
 import com.quiz.question.dto.response.AIChatResponse;
+import com.quiz.question.service.SingleplayerQuestionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -15,6 +16,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 @Service
 public class AIEventHandler {
     private final RabbitTemplate rabbitTemplate;
+    private final SingleplayerQuestionService questionService;
 
     private final BlockingQueue<AIChatResponse> aiResponseQueue = new LinkedBlockingQueue<>();
 
@@ -24,8 +26,9 @@ public class AIEventHandler {
     @Value("${amqp.queue.ai.request}")
     private String aiRequestQueueName;
 
-    public AIEventHandler(RabbitTemplate rabbitTemplate) {
+    public AIEventHandler(RabbitTemplate rabbitTemplate, SingleplayerQuestionService questionService) {
         this.rabbitTemplate = rabbitTemplate;
+        this.questionService = questionService;
     }
 
     public AIChatResponse sendAIRequest(String prompt) {
@@ -52,8 +55,12 @@ public class AIEventHandler {
         log.info("Received AIChatResponse from AI response queue: {}", response);
         boolean offered = aiResponseQueue.offer(response);
 
+        questionService.saveAIQuestions(response.getResponse());
+
         if (!offered) {
             log.warn("Failed to add AIChatResponse to the blocking queue. Queue might be full.");
         }
+
+
     }
 }

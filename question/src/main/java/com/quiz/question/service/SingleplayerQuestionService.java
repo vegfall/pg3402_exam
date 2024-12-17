@@ -1,6 +1,7 @@
 package com.quiz.question.service;
 
 import com.quiz.question.client.ResultClient;
+import com.quiz.question.event.AIEventHandler;
 import com.quiz.question.event.ResultEventHandler;
 import com.quiz.question.dto.QuestionDTO;
 import com.quiz.question.dto.ResultDTO;
@@ -18,11 +19,15 @@ import com.quiz.question.model.Alternative;
 import com.quiz.question.model.Question;
 import com.quiz.question.repository.QuestionRepository;
 import com.quiz.question.repository.SessionRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+@Slf4j
 @Service
 public class SingleplayerQuestionService implements QuestionService {
     private final SessionRepository sessionRepository;
@@ -30,13 +35,16 @@ public class SingleplayerQuestionService implements QuestionService {
     private final ResultEventHandler resultEventHandler;
     private final ResultClient resultClient;
     private final QuestionMapper questionMapper;
+    private final AIEventHandler aiEventHandler;
 
-    public SingleplayerQuestionService(SessionRepository sessionRepository, QuestionRepository questionRepository, ResultEventHandler resultEventHandler, ResultClient resultClient, QuestionMapper questionMapper) {
+    public SingleplayerQuestionService(
+            SessionRepository sessionRepository, QuestionRepository questionRepository, ResultEventHandler resultEventHandler, ResultClient resultClient, QuestionMapper questionMapper, @Lazy AIEventHandler aiEventHandler) {
         this.sessionRepository = sessionRepository;
         this.questionRepository = questionRepository;
         this.resultEventHandler = resultEventHandler;
         this.resultClient = resultClient;
         this.questionMapper = questionMapper;
+        this.aiEventHandler = aiEventHandler;
     }
 
     private List<Question> getQuestionsBySessionKey(String sessionKey) {
@@ -61,10 +69,25 @@ public class SingleplayerQuestionService implements QuestionService {
         return questionMapper.toModel(questionEntity);
     }
 
+    public void saveAIQuestions(String aiResponse) {
+        log.info("HERE IT IS: {}", aiResponse);
+    }
 
     @Override
     public QuestionDTO getQuestion(String sessionKey, Integer questionKey) {
-        return questionMapper.toDTO(getQuestionByQuestionKey(sessionKey, questionKey));
+        QuestionDTO currentQuestion = questionMapper.toDTO(getQuestionByQuestionKey(sessionKey, questionKey));
+        boolean availableQuestions = checkMoreQuestions(sessionKey, questionKey, 1);
+
+        log.info("SessionKey: {}, QuestionKey: {}, CurrentQuestion: {}, AvailableOptions: {}", sessionKey, questionKey, currentQuestion.getQuestionText(), availableQuestions);
+
+        if (!availableQuestions) {
+            log.info("No more questions for {}, retrieving from AI...", sessionKey);
+
+            String prompt = "Generate 5 quiz questions with 4 alternatives each. Theme: history";
+            aiEventHandler.sendAIRequest(prompt);
+        }
+
+        return currentQuestion;
     }
 
     @Override
@@ -129,12 +152,10 @@ public class SingleplayerQuestionService implements QuestionService {
 
     @Override
     public boolean checkMoreQuestions(String sessionKey, int currentQuestionKey) {
-        for (Question question : getQuestionsBySessionKey(sessionKey)) {
-            if (question.getQuestionKey() > currentQuestionKey /*+ 1*/) {
-                return true;
-            }
-        }
+        return currentQuestionKey < getQuestionsBySessionKey(sessionKey).size() - 1;
+    }
 
-        return false;
+    private boolean checkMoreQuestions(String sessionKey, int currentQuestionKey, int buffer) {
+        return currentQuestionKey < getQuestionsBySessionKey(sessionKey).size() - 1 - buffer;
     }
 }
