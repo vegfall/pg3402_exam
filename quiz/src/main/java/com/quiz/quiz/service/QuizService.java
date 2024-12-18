@@ -24,5 +24,5 @@ public interface QuizService {
     SessionStatus getStatus(String sessionKey);
     void startSession(String sessionKey);
     SessionDTO loadPreviousSession(String sessionKey, LoadSessionRequest request);
-    //AIChatRequest getAIQuestion(String sessionKey);
+    List<SessionDTO> getSessions();
 }

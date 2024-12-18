@@ -15,13 +15,18 @@ import com.quiz.quiz.mapper.QuizMapper;
 import com.quiz.quiz.model.Session;
 import com.quiz.quiz.model.SessionStatus;
 import com.quiz.quiz.repository.SessionRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import java.security.SecureRandom;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class SingleplayerQuizService implements QuizService {
+    private static final Logger log = LoggerFactory.getLogger(SingleplayerQuizService.class);
     private final QuestionClient questionClient;
     private final SessionRepository sessionRepository;
     private final QuizMapper quizMapper;
@@ -134,13 +139,33 @@ public class SingleplayerQuizService implements QuizService {
         return quizMapper.toDTO(quizMapper.toModel(sessionEntity));
     }
 
+    @Override
+    public List<SessionDTO> getSessions() {
+        List<SessionDTO> sessions = new ArrayList<>();
+        List<SessionEntity> sessionEntities = sessionRepository.findAll();
+
+        for (SessionEntity sessionEntity : sessionEntities) {
+            sessions.add(quizMapper.toDTO(quizMapper.toModel(sessionEntity)));
+        }
+
+        return sessions;
+    }
+
     private SessionEntity getSessionEntityByKey(String sessionKey) {
         return sessionRepository.findBySessionKey(sessionKey)
                 .orElseThrow(() -> new RuntimeException("Session not found"));
     }
 
     private Session getSessionByKey(String sessionKey) {
-        return quizMapper.toModel(getSessionEntityByKey(sessionKey));
+        SessionEntity sessionEntity = getSessionEntityByKey(sessionKey);
+
+        if (sessionEntity.getCurrentQuestionKey() == 0) {
+            sessionEntity.setCurrentQuestionKey(1);
+
+            sessionRepository.save(sessionEntity);
+        }
+
+        return quizMapper.toModel(sessionEntity);
     }
 
     private String generateSessionKey(int length) {

@@ -73,10 +73,6 @@ public class SingleplayerQuestionService implements QuestionService {
 
         questions.sort(Comparator.comparingInt(Question::getQuestionKey));
 
-        for (Question question : questions) {
-            log.info("Key: {}, Text: {}", question.getQuestionKey(), question.getQuestionText());
-        }
-
         return questions;
     }
 

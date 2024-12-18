@@ -10,6 +10,4 @@ public class SessionDTO {
     private final String theme;
     private final int numberOfAlternatives;
     private final String username;
-    //Does DTO need currentQuestionKey?
-    //private int currentQuestionKey;
 }

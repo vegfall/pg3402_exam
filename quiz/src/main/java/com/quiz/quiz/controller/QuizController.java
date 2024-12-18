@@ -108,4 +108,11 @@ public class QuizController {
                 ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
                 : new ResponseEntity<>(sessionScores, HttpStatus.OK);
     }
+
+    @GetMapping("session/get-sessions")
+    public ResponseEntity<List<SessionDTO>> getSessions() {
+        List<SessionDTO> sessions = quizService.getSessions();
+
+        return new ResponseEntity<>(sessions, HttpStatus.OK);
+    }
 }

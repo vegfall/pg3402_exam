@@ -1,13 +1,27 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import { LoadSessionRequest } from "../../types/request/loadSessionRequest";
 import { quizApi } from "../config/axiosApi";
+import { Session } from "../../types/session";
 
 export default function HomePage() {
   const [username, setUsername] = useState<string>("");
   const [sessionKey, setSessionKey] = useState<string>("");
+  const [sessions, setSessions] = useState<Session[]>([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    quizApi
+      .get("/session/get-sessions")
+      .then((response) => {
+        setSessions(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching sessions:", error);
+        alert("Failed to load sessions. Please try again later.");
+      });
+  }, []);
 
   const handleNewQuiz = () => {
     if (!username) {
@@ -43,6 +57,10 @@ export default function HomePage() {
       });
   };
 
+  const handleSelectSession = (key: string) => {
+    setSessionKey(key);
+  };
+
   return (
     <div>
       <h1>Welcome to the Quiz Game!</h1>
@@ -74,6 +92,21 @@ export default function HomePage() {
       <div>
         <button onClick={handleExistingQuiz}>Join an Existing Quiz</button>
       </div>
+
+      <h2>Available Sessions</h2>
+      <ul>
+        {sessions.map((session) => (
+          <li key={session.sessionKey}>
+            <span>
+              <strong>Session Key:</strong> {session.sessionKey} |{" "}
+              <strong>Theme:</strong> {session.theme} |{" "}
+            </span>
+            <button onClick={() => handleSelectSession(session.sessionKey)}>
+              Select
+            </button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
