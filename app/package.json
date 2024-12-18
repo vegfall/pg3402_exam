@@ -18,6 +18,7 @@
     "dev": "vite",
     "build": "npm test && vite build",
     "test": "prettier --check . && tsc --noEmit",
-    "prettier:update": "prettier --write ."
+    "prettier:update": "prettier --write .",
+    "serve": "vite preview"
   }
 }

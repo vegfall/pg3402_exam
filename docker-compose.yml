@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   consul:
-    image: consul:latest
+    image: hashicorp/consul:1.15.4
     ports:
       - "8500:8500"
     command: "agent -dev -client=0.0.0.0"
@@ -19,6 +19,8 @@ services:
   quiz:
     build:
       context: ./quiz
+    env_file:
+      - ./quiz/.env
     environment:
       SPRING_PROFILES_ACTIVE: docker
       SPRING_CLOUD_CONSUL_HOST: consul
@@ -31,6 +33,8 @@ services:
   question:
     build:
       context: ./question
+    env_file:
+      - ./question/.env
     environment:
       SPRING_PROFILES_ACTIVE: docker
       SPRING_CLOUD_CONSUL_HOST: consul
@@ -43,6 +47,8 @@ services:
   result:
     build:
       context: ./result
+    env_file:
+      - ./result/.env
     environment:
       SPRING_PROFILES_ACTIVE: docker
       SPRING_CLOUD_CONSUL_HOST: consul
@@ -55,6 +61,8 @@ services:
   ai:
     build:
       context: ./ai
+    env_file:
+      - ./ai/.env
     environment:
       SPRING_PROFILES_ACTIVE: docker
       SPRING_CLOUD_CONSUL_HOST: consul
@@ -67,6 +75,8 @@ services:
   gateway:
     build:
       context: ./gateway
+    env_file:
+      - ./gateway/.env
     environment:
       SPRING_PROFILES_ACTIVE: docker
       SPRING_CLOUD_CONSUL_HOST: consul
@@ -74,10 +84,10 @@ services:
       RABBITMQ_HOST: rabbitmq
     depends_on:
       - consul
-      - quiz-service
-      - question-service
-      - result-service
-      - ai-service
+      - quiz
+      - question
+      - result
+      - ai
 
   app:
     build:
@@ -88,32 +98,29 @@ services:
       - gateway
 
   mysql-quiz:
-    image: mysql:8
+    image: mysql:8.0
+    env_file:
+      - ./quiz/.env
     environment:
-      MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: quizdb
-    volumes:
-      - quiz-data:/var/lib/mysql
     ports:
       - "3306"
 
   mysql-question:
-    image: mysql:8
+    image: mysql:8.0
+    env_file:
+      - ./question/.env
     environment:
-      MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: questiondb
-    volumes:
-      - question-data:/var/lib/mysql
     ports:
       - "3307"
 
   mysql-result:
-    image: mysql:8
+    image: mysql:8.0
+    env_file:
+      - ./result/.env
     environment:
-      MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: resultdb
-    volumes:
-      - result-data:/var/lib/mysql
     ports:
       - "3308"
 

@@ -1,6 +1,6 @@
-FROM openjdk:17-jdk-slim
+FROM openjdk:21-jdk-slim
 WORKDIR /app
-COPY target/quiz-service-*.jar app.jar
+COPY target/ai-*.jar app.jar
 EXPOSE 0
 ENV SPRING_PROFILES_ACTIVE=docker
 ENTRYPOINT ["java", "-jar", "app.jar"]
