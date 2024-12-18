@@ -9,11 +9,13 @@ import com.quiz.result.entity.UserEntity;
 import com.quiz.result.mapper.ResultMapper;
 import com.quiz.result.repository.ScoreRepository;
 import com.quiz.result.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 public class SingleplayerResultService implements ResultService {
     private final ScoreRepository scoreRepository;

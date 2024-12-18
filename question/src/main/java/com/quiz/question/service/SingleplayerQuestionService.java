@@ -71,6 +71,12 @@ public class SingleplayerQuestionService implements QuestionService {
             questions.add(questionMapper.toModel(question));
         }
 
+        questions.sort(Comparator.comparingInt(Question::getQuestionKey));
+
+        for (Question question : questions) {
+            log.info("Key: {}, Text: {}", question.getQuestionKey(), question.getQuestionText());
+        }
+
         return questions;
     }
 
@@ -216,6 +222,8 @@ public class SingleplayerQuestionService implements QuestionService {
 
         List<RevealQuestionDTO> revealQuestions = new ArrayList<>();
         List<RevealAlternativeDTO> revealAlternatives;
+
+        log.info("---\nsessionKey: {}, username: {}, question: {}", sessionKey, username, questions.getFirst().getQuestionText());
 
         for (int i = 0; i < score.getChosenAlternatives().size(); i++) {
             revealAlternatives = new ArrayList<>();
