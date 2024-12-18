@@ -1,4 +1,4 @@
-package com.quiz.quiz.config;
+package com.quiz.question.config;
 
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;

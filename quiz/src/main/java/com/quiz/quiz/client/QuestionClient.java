@@ -10,6 +10,7 @@ import com.quiz.quiz.dto.SessionScoreDTO;
 import com.quiz.quiz.dto.conclusion.revealScoreDTO;
 import com.quiz.quiz.dto.request.NewSessionRequest;
 import com.quiz.quiz.dto.request.PostAnswerRequest;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -20,9 +21,10 @@ import java.util.List;
 public class QuestionClient {
     private final WebClient webClient;
 
-    public QuestionClient(WebClient.Builder webClientBuilder) {
+    public QuestionClient(WebClient.Builder webClientBuilder, @Value("${gateway.api.key}") String apiKey) {
         this.webClient = webClientBuilder
-                .baseUrl("http://127.0.0.1:8081/question/")
+                .baseUrl("http://question/question/")
+                .defaultHeader("gateway-auth", apiKey)
                 .build();
     }
 
