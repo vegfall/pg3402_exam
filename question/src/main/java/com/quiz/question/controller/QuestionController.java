@@ -19,11 +19,9 @@ import java.util.List;
 @RequestMapping("/question")
 public class QuestionController {
     private final SingleplayerQuestionService questionService;
-    private final AIEventHandler aiEventHandler;
 
-    public QuestionController(SingleplayerQuestionService questionService, AIEventHandler aiEventHandler) {
+    public QuestionController(SingleplayerQuestionService questionService) {
         this.questionService = questionService;
-        this.aiEventHandler = aiEventHandler;
     }
 
     @GetMapping("{sessionKey}/{questionKey}")
