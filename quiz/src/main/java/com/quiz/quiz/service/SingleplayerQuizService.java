@@ -43,7 +43,7 @@ public class SingleplayerQuizService implements QuizService {
         sessionEntity.setTheme(sessionRequest.getTheme());
         sessionEntity.setNumberOfAlternatives(sessionRequest.getNumberOfAlternatives());
         sessionEntity.setUsername(sessionRequest.getUsername());
-        sessionEntity.setCurrentQuestionKey(0);
+        sessionEntity.setCurrentQuestionKey(1);
         sessionEntity.setStatus(SessionStatus.ONGOING);
 
         savedSessionEntity = sessionRepository.save(sessionEntity);
@@ -148,7 +148,7 @@ public class SingleplayerQuizService implements QuizService {
         SecureRandom random = new SecureRandom();
         StringBuilder sessionKey = new StringBuilder(10);
 
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < length; i++) {
             sessionKey.append(allowedCharacters.charAt(random.nextInt(allowedCharacters.length())));
         }
 

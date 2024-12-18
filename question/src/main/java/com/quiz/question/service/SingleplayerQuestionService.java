@@ -188,12 +188,6 @@ public class SingleplayerQuestionService implements QuestionService {
         //Had to implement due to database returning random sequence.
         alternatives.sort(Comparator.comparingInt(Alternative::getAlternativeKey));
 
-        log.info("---");
-        for (Alternative alternative : alternatives) {
-            log.info("Inside... Id: {}, Key: {}, Text: {}", alternative.getAlternativeId(), alternative.getAlternativeKey(), alternative.getAlternativeText());
-        }
-        log.info("---");
-
         Alternative chosenAlternative = alternatives.get(answer.getAlternativeKey() - 1);
         int correctAlternativeKey = 0;
 
@@ -211,12 +205,6 @@ public class SingleplayerQuestionService implements QuestionService {
                 correctAlternativeKey,
                 chosenAlternative.getAlternativeExplanation()
         );
-
-        log.info("QuestionKey: {}, AlternativeKey: {}, Correct: {}, Chosen: {}", questionKey, answer.getAlternativeKey(), correctAlternativeKey, chosenAlternative.getAlternativeText());
-        log.info("Id: {}, Key: {}, Text: {}", chosenAlternative.getAlternativeId(), chosenAlternative.getAlternativeKey(), chosenAlternative.getAlternativeExplanation());
-
-        //Oslo -> Copenhagen
-        //
 
         return resultEventHandler.sendGetResultRequest(getResultRequest);
     }
@@ -262,12 +250,41 @@ public class SingleplayerQuestionService implements QuestionService {
 
     @Override
     public void postSession(NewSessionRequest session) {
-        SessionEntity sessionEntity = new SessionEntity();
+        AIPromptBuilder promptBuilder = new AIPromptBuilder();
 
-        sessionEntity.setSessionKey(session.getSessionKey());
-        sessionEntity.setTheme(session.getTheme());
-        sessionEntity.setNumberOfAlternatives(session.getNumberOfAlternatives());
+        SessionEntity sessionEntity = sessionRepository.findBySessionKey(session.getSessionKey())
+                .orElseGet(() -> {
+                    SessionEntity newSession = new SessionEntity();
+                    newSession.setSessionKey(session.getSessionKey());
+                    newSession.setTheme(session.getTheme());
+                    newSession.setNumberOfAlternatives(session.getNumberOfAlternatives());
+                    sessionRepository.save(newSession);
+                    return newSession;
+                });
 
-        sessionRepository.save(sessionEntity);
+        String prompt = promptBuilder.build(sessionEntity.getTheme(), sessionEntity.getNumberOfAlternatives(), 1, List.of());
+        aiEventHandler.sendAIRequest(sessionEntity.getSessionKey(), prompt);
+
+        waitForQuestionsToBeReady(sessionEntity.getSessionKey(), 10);
+
+        getQuestion(session.getSessionKey(), 1);
+    }
+
+    private void waitForQuestionsToBeReady(String sessionKey, int maxRetries) {
+        int currentRetry = 0;
+        while (currentRetry < maxRetries) {
+            if (questionRepository.existsBySession_SessionKey(sessionKey)) {
+                return;
+            }
+
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeException("Interrupted while waiting for AI questions", e);
+            }
+            currentRetry++;
+        }
+        throw new RuntimeException("Unable to get find questions for: " + sessionKey + "  in " + maxRetries + " tries.");
     }
 }

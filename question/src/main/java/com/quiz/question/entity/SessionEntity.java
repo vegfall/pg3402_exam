@@ -3,6 +3,7 @@ package com.quiz.question.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -26,5 +27,5 @@ public class SessionEntity {
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Set<QuestionEntity> questions;
+    private Set<QuestionEntity> questions = new HashSet<>();
 }

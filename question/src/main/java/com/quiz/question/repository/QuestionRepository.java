@@ -14,4 +14,5 @@ public interface QuestionRepository extends JpaRepository<QuestionEntity, Long> 
     @Query("SELECT COALESCE(MAX(q.questionKey), 0) + 1 FROM QuestionEntity q WHERE q.session.sessionId = :sessionId")
     int findNextQuestionKeyBySessionId(@Param("sessionId") Long sessionId);
 
+    boolean existsBySession_SessionKey(String sessionKey);
 }
