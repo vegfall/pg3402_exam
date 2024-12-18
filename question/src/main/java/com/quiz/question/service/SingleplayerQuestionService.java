@@ -29,10 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 @Slf4j
@@ -188,6 +185,15 @@ public class SingleplayerQuestionService implements QuestionService {
         GetResultRequest getResultRequest;
         List<Alternative> alternatives = new ArrayList<>(getQuestionByQuestionKey(sessionKey, questionKey).getAlternatives());
 
+        //Had to implement due to database returning random sequence.
+        alternatives.sort(Comparator.comparingInt(Alternative::getAlternativeKey));
+
+        log.info("---");
+        for (Alternative alternative : alternatives) {
+            log.info("Inside... Id: {}, Key: {}, Text: {}", alternative.getAlternativeId(), alternative.getAlternativeKey(), alternative.getAlternativeText());
+        }
+        log.info("---");
+
         Alternative chosenAlternative = alternatives.get(answer.getAlternativeKey() - 1);
         int correctAlternativeKey = 0;
 
@@ -205,6 +211,12 @@ public class SingleplayerQuestionService implements QuestionService {
                 correctAlternativeKey,
                 chosenAlternative.getAlternativeExplanation()
         );
+
+        log.info("QuestionKey: {}, AlternativeKey: {}, Correct: {}, Chosen: {}", questionKey, answer.getAlternativeKey(), correctAlternativeKey, chosenAlternative.getAlternativeText());
+        log.info("Id: {}, Key: {}, Text: {}", chosenAlternative.getAlternativeId(), chosenAlternative.getAlternativeKey(), chosenAlternative.getAlternativeExplanation());
+
+        //Oslo -> Copenhagen
+        //
 
         return resultEventHandler.sendGetResultRequest(getResultRequest);
     }

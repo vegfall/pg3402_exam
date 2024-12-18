@@ -151,7 +151,7 @@ export default function PlayPage() {
                 }}
                 disabled={correctAlternative !== null}
               >
-                {alternative.alternativeKey}: {alternative.alternativeText}
+                {alternative.alternativeText}
               </button>
             ))}
           </div>
