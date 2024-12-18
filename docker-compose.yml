@@ -1,0 +1,123 @@
+version: "3.8"
+
+services:
+  consul:
+    image: consul:latest
+    ports:
+      - "8500:8500"
+    command: "agent -dev -client=0.0.0.0"
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+  quiz:
+    build:
+      context: ./quiz
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_CLOUD_CONSUL_HOST: consul
+      SPRING_CLOUD_CONSUL_PORT: 8500
+      RABBITMQ_HOST: rabbitmq
+    depends_on:
+      - consul
+      - rabbitmq
+
+  question:
+    build:
+      context: ./question
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_CLOUD_CONSUL_HOST: consul
+      SPRING_CLOUD_CONSUL_PORT: 8500
+      RABBITMQ_HOST: rabbitmq
+    depends_on:
+      - consul
+      - rabbitmq
+
+  result:
+    build:
+      context: ./result
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_CLOUD_CONSUL_HOST: consul
+      SPRING_CLOUD_CONSUL_PORT: 8500
+      RABBITMQ_HOST: rabbitmq
+    depends_on:
+      - consul
+      - rabbitmq
+
+  ai:
+    build:
+      context: ./ai
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_CLOUD_CONSUL_HOST: consul
+      SPRING_CLOUD_CONSUL_PORT: 8500
+      RABBITMQ_HOST: rabbitmq
+    depends_on:
+      - consul
+      - rabbitmq
+
+  gateway:
+    build:
+      context: ./gateway
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_CLOUD_CONSUL_HOST: consul
+      SPRING_CLOUD_CONSUL_PORT: 8500
+      RABBITMQ_HOST: rabbitmq
+    depends_on:
+      - consul
+      - quiz-service
+      - question-service
+      - result-service
+      - ai-service
+
+  app:
+    build:
+      context: ./app
+    ports:
+      - "3000:80"
+    depends_on:
+      - gateway
+
+  mysql-quiz:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: quizdb
+    volumes:
+      - quiz-data:/var/lib/mysql
+    ports:
+      - "3306"
+
+  mysql-question:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: questiondb
+    volumes:
+      - question-data:/var/lib/mysql
+    ports:
+      - "3307"
+
+  mysql-result:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: resultdb
+    volumes:
+      - result-data:/var/lib/mysql
+    ports:
+      - "3308"
+
+volumes:
+  quiz-data:
+  question-data:
+  result-data:
